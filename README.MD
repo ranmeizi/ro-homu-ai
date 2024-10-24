@@ -1,0 +1,3 @@
+# ragnarok homuculus ai  
+
+developing
