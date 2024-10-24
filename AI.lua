@@ -6,7 +6,6 @@ FOLLOW_STICKY = 3000
 
 States = {
     FOLLOW = 'follow',
-    PRE_BATTLE = 'pre_battle',
     BATTLE = 'battle',
     BACK = 'back',
 }
@@ -15,23 +14,29 @@ States = {
 ---@field id number
 ---@field owner_id number|nil
 ---@field state string
----@field target number|nil
+---@field target number
 ---@field skills table|nil
 local Creep = {
     id = 0,
     owner_id = nil,
+    hp = 0,
+    sp = 0,
     type = 0,
     state = States.PRE_BATTLE,
     -- motion target
-    target = nil,
+    target = 0,
     -- skills
-    skills = nil
+    skills = nil,
+    -- frequency times attack use main attack skill
+    frequency = 1
 }
+
+-- counter attack
+SKILL_FREQ_LIST = List.new()
 
 -- common command
 
 local function cmd_get_skill()
-
     local type = GetV(V_HOMUNTYPE, Creep.id)
 
     if type == FILIR then
@@ -51,6 +56,8 @@ function AI(id)
 
     Creep.id = id
     Creep.type = type
+    Creep.hp = GetV(V_HP, id)
+    Creep.sp = GetV(V_SP, id)
 
     -- if dont have skills , try call cmd_get_skill
     -- but when you change type , pleace use command
@@ -58,7 +65,7 @@ function AI(id)
         cmd_get_skill()
     end
 
-    if Creep.owner_id == nil then 
+    if Creep.owner_id == nil then
         Creep.owner_id = GetV(V_OWNER, id)
     end
 

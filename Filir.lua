@@ -26,25 +26,34 @@ local handler = {
     end,
     ---@param creep Creep
     [States.PRE_BATTLE] = function(creep)
-        if creep.target == nil then
+        local target = creep.target or Apis.getEnemy(creep)
 
-        else
-            -- turn to battle
+        if target ~= 0 then
+            -- turn to pre-battle
             creep.state = States.BATTLE
         end
+
+        -- stay by owner
+        handler[States.FOLLOW](creep)
     end,
     ---@param creep Creep
     [States.BATTLE] = function(creep)
-        local target = creep.target
+        local target = creep.target or Apis.getEnemy(creep)
+
+        if target == 0 then
+            -- turn to pre-battle
+            creep.state = States.PRE_BATTLE
+        end
 
         -- can i use skill?
 
         -- normal attack
         local res = Apis.attack(creep, target)
-        if (ERR_INVALID_TARGET == res) then
+        if res == ERR_INVALID_TARGET then
             -- turn to pre-battle
+            creep.target = 0
             creep.state = States.PRE_BATTLE
-        elseif (ERR_NOT_IN_RANGE == res) then
+        elseif res == ERR_NOT_IN_RANGE then
             Apis.moveTo(creep, target)
         end
     end,

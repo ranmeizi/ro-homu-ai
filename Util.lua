@@ -114,7 +114,6 @@ function IsOutOfSight(id1, id2)
 	end
 end
 
-
 --- check is INVALID_TARGET
 --- @param creep Creep
 --- @param target_id number
@@ -133,8 +132,39 @@ function CheckTarget(creep, target_id)
 end
 
 Apis = {
-	find = function(creep)
+	--- find closest enemy
+	--- @param creep Creep
+	findClosestEnemy = function(creep)
+		local result = 0
+		local actors = GetActors()
+		local enemys = {}
+		local index  = 1
 
+		for i, v in ipairs(actors) do
+			if (v ~= creep.owner_id and v ~= creep.id) then
+				if (1 == IsMonster(v)) then
+					enemys[index] = v
+					index = index + 1
+				end
+			end
+		end
+
+		local min_dis = 100
+		local dis
+		for i, v in ipairs(enemys) do
+			dis = GetDistance2(creep.id, v)
+			if (dis < min_dis) then
+				result = v
+				min_dis = dis
+			end
+		end
+
+		return result
+	end,
+	--- @param creep Creep
+	getEnemy = function(creep)
+		creep.target = Apis.findClosestEnemy(creep)
+		return creep.target
 	end,
 	--- normal attack
 	--- @param creep Creep
@@ -207,7 +237,7 @@ Apis = {
 		end
 
 		-- moveto
-		local x, y=GetV (V_POSITION,target_id)
+		local x, y = GetV(V_POSITION, target_id)
 
 		Move(creep.id, x, y)
 
