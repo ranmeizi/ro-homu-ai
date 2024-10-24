@@ -2,6 +2,8 @@ require "AI\\Const"
 require "AI\\Util"
 require "AI\\Filir"
 
+FOLLOW_STICKY = 3000
+
 States = {
     FOLLOW = 'follow',
     PRE_BATTLE = 'pre_battle',
@@ -19,7 +21,7 @@ local Creep = {
     id = 0,
     owner_id = nil,
     type = 0,
-    state = States.FOLLOW,
+    state = States.PRE_BATTLE,
     -- motion target
     target = nil,
     -- skills

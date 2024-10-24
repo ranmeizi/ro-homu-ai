@@ -1,4 +1,3 @@
-
 require "AI\\Const"
 
 --------------------------------------------
@@ -6,49 +5,49 @@ require "AI\\Const"
 --------------------------------------------
 List = {}
 
-function List.new ()
-	return { first = 0, last = -1}
+function List.new()
+	return { first = 0, last = -1 }
 end
 
-function List.pushleft (list, value)
-	local first = list.first-1
+function List.pushleft(list, value)
+	local first = list.first - 1
 	list.first  = first
 	list[first] = value
 end
 
-function List.pushright (list, value)
+function List.pushright(list, value)
 	local last = list.last + 1
 	list.last = last
 	list[last] = value
 end
 
-function List.popleft (list)
+function List.popleft(list)
 	local first = list.first
-	if first > list.last then 
+	if first > list.last then
 		return nil
 	end
 	local value = list[first]
-	list[first] = nil         -- to allow garbage collection
-	list.first = first+1
+	list[first] = nil -- to allow garbage collection
+	list.first = first + 1
 	return value
 end
 
-function List.popright (list)
+function List.popright(list)
 	local last = list.last
 	if list.first > last then
 		return nil
 	end
 	local value = list[last]
 	list[last] = nil
-	list.last = last-1
-	return value 
+	list.last = last - 1
+	return value
 end
 
-function List.clear (list)
-	for i,v in ipairs(list) do
+function List.clear(list)
+	for i, v in ipairs(list) do
 		list[i] = nil
 	end
---[[
+	--[[
 	if List.size(list) == 0 then
 		return
 	end
@@ -62,7 +61,7 @@ function List.clear (list)
 	list.last = -1
 end
 
-function List.size (list)
+function List.size(list)
 	local size = list.last - list.first + 1
 	return size
 end
@@ -75,52 +74,39 @@ end
 
 
 
-function	GetDistance (x1,y1,x2,y2)
-	return math.floor(math.sqrt((x1-x2)^2+(y1-y2)^2))
+function GetDistance(x1, y1, x2, y2)
+	return math.floor(math.sqrt((x1 - x2) ^ 2 + (y1 - y2) ^ 2))
 end
 
-
-
-
-function	GetDistance2 (id1, id2)
-	local x1, y1 = GetV (V_POSITION,id1)
-	local x2, y2 = GetV (V_POSITION,id2)
+function GetDistance2(id1, id2)
+	local x1, y1 = GetV(V_POSITION, id1)
+	local x2, y2 = GetV(V_POSITION, id2)
 	if (x1 == -1 or x2 == -1) then
 		return -1
 	end
-	return GetDistance (x1,y1,x2,y2)
+	return GetDistance(x1, y1, x2, y2)
 end
 
-
-
-
-function	GetOwnerPosition (id)
-	return GetV (V_POSITION,GetV(V_OWNER,id))
+function GetOwnerPosition(id)
+	return GetV(V_POSITION, GetV(V_OWNER, id))
 end
 
-
-
-
-
-function	GetDistanceFromOwner (id)
-	local x1, y1 = GetOwnerPosition (id)
-	local x2, y2 = GetV (V_POSITION,id)
+function GetDistanceFromOwner(id)
+	local x1, y1 = GetOwnerPosition(id)
+	local x2, y2 = GetV(V_POSITION, id)
 	if (x1 == -1 or x2 == -1) then
 		return -1
 	end
-	return GetDistance (x1,y1,x2,y2)
+	return GetDistance(x1, y1, x2, y2)
 end
 
-
-
-
-function	IsOutOfSight (id1,id2)
-	local x1,y1 = GetV (V_POSITION,id1)
-	local x2,y2 = GetV (V_POSITION,id2)
+function IsOutOfSight(id1, id2)
+	local x1, y1 = GetV(V_POSITION, id1)
+	local x2, y2 = GetV(V_POSITION, id2)
 	if (x1 == -1 or x2 == -1) then
 		return true
 	end
-	local d = GetDistance (x1,y1,x2,y2)
+	local d = GetDistance(x1, y1, x2, y2)
 	if d > 20 then
 		return true
 	else
@@ -129,56 +115,102 @@ function	IsOutOfSight (id1,id2)
 end
 
 
-
-
-
-function	IsInAttackSight (id1,id2)
-	local x1,y1 = GetV (V_POSITION,id1)
-	local x2,y2 = GetV (V_POSITION,id2)
-	if (x1 == -1 or x2 == -1) then
-		return false
-	end
-	local d		= GetDistance (x1,y1,x2,y2)
-	local a     = 0
-	if (MySkill == 0) then
-		a     = GetV (V_ATTACKRANGE,id1)
-	else
-		a     = GetV (V_SKILLATTACKRANGE_LEVEL, id1, MySkill, MySkillLevel)
+--- check is INVALID_TARGET
+--- @param creep Creep
+--- @param target_id number
+function CheckTarget(creep, target_id)
+	-- is dead
+	if (MOTION_DEAD == GetV(V_MOTION, target_id)) then -- ENEMY_DEAD_IN
+		return ERR_INVALID_TARGET
 	end
 
-	if a >= d then
-		return true
-	else
-		return false
+	-- in sight
+	if (true == IsOutOfSight(creep.id, target_id)) then
+		return ERR_INVALID_TARGET
 	end
-end
 
----@param target_id string
-function CheckTarget(target_id)
-	
+	return OK
 end
 
 Apis = {
+	find = function(creep)
+
+	end,
 	--- normal attack
 	--- @param creep Creep
-	--- @param target_id string
-	attack = function(creep,target_id)
+	--- @param target_id number
+	attack = function(creep, target_id)
 		-- check target
+		if CheckTarget(creep, target_id) ~= OK then
+			return ERR_INVALID_TARGET
+		end
 
 		-- check distance
+		local x1, y1 = GetV(V_POSITION, creep.id)
+		local x2, y2 = GetV(V_POSITION, target_id)
+		if (x1 == -1 or x2 == -1) then
+			-- I think cant be there ,it should be return last step
+			return ERR_INVALID_TARGET
+		end
+		local d = GetDistance(x1, y1, x2, y2)
+		local a = GetV(V_ATTACKRANGE, creep.id)
+
+		if a < d then
+			return ERR_NOT_IN_RANGE
+		end
 
 		-- attack
+
+		Attack(creep.id, target_id)
+
+		return OK
 	end,
 	--- skill attack
 	--- @param creep Creep
-	--- @param target_id string
+	--- @param target_id number
 	--- @param skill number
 	--- @param level number
-	skill_attack = function(creep,target_id,skill,level) 
+	skill_attack = function(creep, target_id, skill, level)
 		-- check target
+		if CheckTarget(creep, target_id) ~= OK then
+			return ERR_INVALID_TARGET
+		end
 
 		-- check distance
+		local x1, y1 = GetV(V_POSITION, creep.id)
+		local x2, y2 = GetV(V_POSITION, target_id)
+		if (x1 == -1 or x2 == -1) then
+			-- I think cant be there ,it should be return last step
+			return ERR_INVALID_TARGET
+		end
+		local d = GetDistance(x1, y1, x2, y2)
+		local a = GetV(V_SKILLATTACKRANGE_LEVEL, creep.id, skill, level)
 
-		-- attack
+		if a < d then
+			return ERR_NOT_IN_RANGE
+		end
+
+		-- skill_attack
+		if (1 ~= SkillObject(creep.id, level, skill, target_id)) then
+			-- maybe no sp?
+			return ERR_UNKNOWN
+		end
+
+		return OK
+	end,
+	--- @param creep Creep
+	--- @param target_id number
+	moveTo = function(creep, target_id)
+		-- check target
+		if CheckTarget(creep, target_id) ~= OK then
+			return ERR_INVALID_TARGET
+		end
+
+		-- moveto
+		local x, y=GetV (V_POSITION,target_id)
+
+		Move(creep.id, x, y)
+
+		return OK
 	end
 }
