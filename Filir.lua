@@ -1,16 +1,3 @@
-local skills = {
-    {
-        id = HFLI_FLEET,
-        cooldown = 120000,
-        lastSkillTime = 0,
-    },
-    {
-        id = HFLI_SPEED,
-        cooldown = 120000,
-        lastSkillTime = 0,
-    },
-}
-
 --- mainskill is the best value skill and level
 --- when sp is not enough it must be only
 --- the crazy skiller should always call skill_attack
@@ -98,9 +85,4 @@ function Filir_run(creep)
     local state = creep.state
 
     handler[state](handler, creep)
-end
-
--- get filir`s skills
-function Filir_get_skills()
-    return skills
 end

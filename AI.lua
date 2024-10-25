@@ -47,10 +47,3 @@ function AI(id)
         Filir_run(Creep)
     end
 end
-
-
-local handler={
-    a = function ()
-        -- 这里引用 handler 报错 “未定义的全局变量 `handler`”
-    end
-}
