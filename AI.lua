@@ -2,14 +2,6 @@ require "AI\\Const"
 require "AI\\Util"
 require "AI\\Filir"
 
-FOLLOW_STICKY = 3000
-
-States = {
-    FOLLOW = 'follow',
-    BATTLE = 'battle',
-    BACK = 'back',
-}
-
 ---@class Creep
 ---@field id number
 ---@field owner_id number|nil
@@ -25,24 +17,12 @@ local Creep = {
     state = States.PRE_BATTLE,
     -- motion target
     target = 0,
-    -- skills
-    skills = nil,
-    -- frequency times attack use main attack skill
-    frequency = 1
 }
 
 -- counter attack
 SKILL_FREQ_LIST = List.new()
 
 -- common command
-
-local function cmd_get_skill()
-    local type = GetV(V_HOMUNTYPE, Creep.id)
-
-    if type == FILIR then
-        Creep.skills = Filir_get_skills()
-    end
-end
 
 --[[
     Boboan AI
@@ -59,18 +39,18 @@ function AI(id)
     Creep.hp = GetV(V_HP, id)
     Creep.sp = GetV(V_SP, id)
 
-    -- if dont have skills , try call cmd_get_skill
-    -- but when you change type , pleace use command
-    if Creep.skills == nil then
-        cmd_get_skill()
-    end
-
     if Creep.owner_id == nil then
         Creep.owner_id = GetV(V_OWNER, id)
     end
-
 
     if type == FILIR then
         Filir_run(Creep)
     end
 end
+
+
+local handler={
+    a = function ()
+        -- 这里引用 handler 报错 “未定义的全局变量 `handler`”
+    end
+}

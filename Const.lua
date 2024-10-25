@@ -201,3 +201,16 @@ ERR_INVALID_TARGET = -7
 ERR_NOT_IN_RANGE = -9
 ERR_UNKNOWN = -99
 --------------------------
+
+
+
+--------------------------
+--- runtime 
+FOLLOW_STICKY = 3000
+
+States = {
+    FOLLOW = 'follow',
+    BATTLE = 'battle',
+    BACK = 'back',
+}
+--------------------------
