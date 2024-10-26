@@ -1,6 +1,6 @@
-require "AI\\Const"
-require "AI\\Util"
-require "AI\\Filir"
+require "AI_sakray\\USER_AI\\Const"
+require "AI_sakray\\USER_AI\\Util"
+require "AI_sakray\\USER_AI\\Filir"
 
 ---@class Creep
 ---@field id number

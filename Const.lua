@@ -210,6 +210,7 @@ FOLLOW_STICKY = 3000
 
 States = {
     FOLLOW = 'follow',
+	PRE_BATTLE = 'pre-battle',
     BATTLE = 'battle',
     BACK = 'back',
 }

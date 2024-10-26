@@ -31,6 +31,8 @@ end
 local handler = {
     ---@param creep Creep
     [States.FOLLOW] = function(self, creep)
+
+        TraceAI('do follow')
         -- get distance
         local distance = GetDistanceFromOwner(creep.id)
 
@@ -49,13 +51,15 @@ local handler = {
             -- turn to pre-battle
             creep.state = States.BATTLE
         end
-
+        TraceAI('do pre-battle')
         -- stay by owner
-        self[States.FOLLOW](creep)
+        self[States.FOLLOW](self,creep)
     end,
     ---@param creep Creep
     [States.BATTLE] = function(self, creep)
         local target = creep.target or Apis.getEnemy(creep)
+
+        TraceAI('do battle')
 
         if target == 0 then
             -- turn to pre-battle
