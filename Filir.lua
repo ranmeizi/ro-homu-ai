@@ -2,14 +2,14 @@
 --- when sp is not enough it must be only
 --- the crazy skiller should always call skill_attack
 local mainSkill = HFLI_FLEET
-local mainSkillLvl = 1
+local mainSkillLvl = 3
 local freq = 3
 
 --- @param creep Creep
 --- @param target_id number
 local function hyperAttack(creep, target_id)
     local res = Apis.attack(creep, target_id)
-
+   
     -- add
     if (res == OK) then
         List.pushright(SKILL_FREQ_LIST, 1)
@@ -32,7 +32,6 @@ local handler = {
     ---@param creep Creep
     [States.FOLLOW] = function(self, creep)
 
-        TraceAI('do follow')
         -- get distance
         local distance = GetDistanceFromOwner(creep.id)
 
@@ -45,23 +44,24 @@ local handler = {
     end,
     ---@param creep Creep
     [States.PRE_BATTLE] = function(self, creep)
-        local target = creep.target or Apis.getEnemy(creep)
+        local target = Apis.getEnemy(creep)
+        -- TraceAI('do pre-battle'..target)
 
-        if target ~= 0 then
+        if target ~= nil then
             -- turn to pre-battle
             creep.state = States.BATTLE
+            return 
         end
-        TraceAI('do pre-battle')
-        -- stay by owner
+       
+        -- -- stay by owner
+        -- TraceAI('do pr-follow')
         self[States.FOLLOW](self,creep)
     end,
     ---@param creep Creep
     [States.BATTLE] = function(self, creep)
-        local target = creep.target or Apis.getEnemy(creep)
+        local target = creep.target
 
-        TraceAI('do battle')
-
-        if target == 0 then
+        if target == nil then
             -- turn to pre-battle
             creep.state = States.PRE_BATTLE
         end
@@ -72,7 +72,7 @@ local handler = {
         local res = hyperAttack(creep, target)
         if res == ERR_INVALID_TARGET then
             -- turn to pre-battle
-            creep.target = 0
+            creep.target = nil
             creep.state = States.PRE_BATTLE
         elseif res == ERR_NOT_IN_RANGE then
             Apis.moveTo(creep, target)

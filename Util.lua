@@ -135,7 +135,8 @@ Apis = {
 	--- find closest enemy
 	--- @param creep Creep
 	findClosestEnemy = function(creep)
-		local result = 0
+		TraceAI('findClosestEnemy')
+		local result = nil
 		local actors = GetActors()
 		local enemys = {}
 		local index  = 1

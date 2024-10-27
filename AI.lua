@@ -6,7 +6,7 @@ require "AI_sakray\\USER_AI\\Filir"
 ---@field id number
 ---@field owner_id number|nil
 ---@field state string
----@field target number
+---@field target number|nil
 ---@field skills table|nil
 local Creep = {
     id = 0,
@@ -16,7 +16,7 @@ local Creep = {
     type = 0,
     state = States.PRE_BATTLE,
     -- motion target
-    target = 0,
+    target = nil,
 }
 
 -- counter attack
@@ -38,6 +38,7 @@ function AI(id)
     Creep.type = type
     Creep.hp = GetV(V_HP, id)
     Creep.sp = GetV(V_SP, id)
+
 
     if Creep.owner_id == nil then
         Creep.owner_id = GetV(V_OWNER, id)
