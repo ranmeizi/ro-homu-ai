@@ -1,14 +1,24 @@
 --- mainskill is the best value skill and level
 --- when sp is not enough it must be only
 --- the crazy skiller should always call skill_attack
-local mainSkill = HFLI_FLEET
-local mainSkillLvl = 3
-local freq = 3
+local skill_main = {
+    id = HFLI_FLEET,
+    level = 3,
+    lastTick = 0,
+    duration = 1000 * 2
+}
 
 --- @param creep Creep
---- @param target_id number|nil
-local function hyperAttack(creep, target_id)
-    return Apis.attack(creep, target_id)
+local function try_use_skill(creep)
+    local tick = GetTick()
+    if tick > skill_main.lastTick + skill_main.duration then
+        if ERR_NOT_IN_RANGE == Apis.skill_attack(creep, creep.target, skill_main.id, skill_main.level) then
+            Apis.moveTo(creep, creep.target)
+        else 
+            -- memo tick
+            skill_main.lastTick = tick
+        end
+    end
 end
 
 
@@ -41,9 +51,8 @@ local handler = {
         end
 
         -- normal attack
-        -- local res = Apis.attack(creep, target)
-        -- use hyper attack
-        local res = hyperAttack(creep, target)
+        local res = Apis.attack(creep, target)
+
         if res == ERR_INVALID_TARGET then
             -- turn to pre-battle
             creep.target = nil
@@ -51,6 +60,8 @@ local handler = {
         elseif res == ERR_NOT_IN_RANGE then
             Apis.moveTo(creep, target)
         end
+
+        try_use_skill(creep)
     end,
     ---@param creep Creep
     [States.BACK] = function(self, creep)
