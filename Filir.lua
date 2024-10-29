@@ -3,15 +3,20 @@
 --- the crazy skiller should always call skill_attack
 local skill_main = {
     id = HFLI_FLEET,
-    level = 3,
+    level = 1,
     lastTick = 0,
-    duration = 1000 * 2
+    duration = 1000 * 3,
+    
 }
+
+function mainskill_reset() 
+    skill_main.lastTick = GetTick()
+end 
 
 --- @param creep Creep
 local function try_use_skill(creep)
     local tick = GetTick()
-    if tick > skill_main.lastTick + skill_main.duration then
+    if tick > (skill_main.lastTick + skill_main.duration) then
         if ERR_NOT_IN_RANGE == Apis.skill_attack(creep, creep.target, skill_main.id, skill_main.level) then
             Apis.moveTo(creep, creep.target)
         else 
@@ -35,11 +40,14 @@ local handler = {
         end
 
         -- check need hyper_follow
-        if creep.hyper_follow and GetTick() > creep.status_start_tick + creep.hyper_follow.delay then
+        if creep.hyper_follow ~= nil and (GetTick() > (creep.status_start_tick + creep.hyper_follow.delay)) then
             creep.hyper_follow.id = creep.owner_id
         end
 
         -- do nothing
+        if creep.hyper_follow ~= nil and creep.hyper_follow.id ~= nil then
+            Hyper_follow(creep)
+        end
     end,
     ---@param creep Creep
     [States.BATTLE] = function(self, creep)
@@ -76,6 +84,11 @@ function Filir_run(creep)
     -- auto attack
     if creep.auto_attack == true and creep.target == nil then
         Apis.getEnemy(creep)
+        -- mainskill_reset()?
+    end
+
+    if creep.target ~= nil then
+        Apis.changeState(creep,States.BATTLE)
     end
 
     handler[state](handler, creep)

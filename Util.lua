@@ -312,6 +312,7 @@ end
 --- 超级跟随
 --- @param creep Creep
 function Hyper_follow(creep)
+	TraceAI('hey hf')
 	if creep.hyper_follow == nil then
 		return -1
 	end

@@ -22,9 +22,9 @@ local Creep = {
     -- hyper follow TOP_LEFT -> TOP_RIGHT -> BOTTOM_RIGHT -> BOTTOM_RIGHT -> TOP_LEFT
     hyper_follow = {
         id = nil,
-        delay = 5000, -- if stay in FOLLOW over {delay} ms , call hyper_follow
+        delay = 500, -- if stay in FOLLOW over {delay} ms , call hyper_follow
         state = nil,
-        distance = 2,
+        distance = 1,
     }
 }
 
