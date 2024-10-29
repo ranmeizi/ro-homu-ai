@@ -14,13 +14,19 @@ local Creep = {
     hp = 0,
     sp = 0,
     type = 0,
-    state = States.PRE_BATTLE,
+    state = States.FOLLOW,
+    auto_attack = true,
     -- motion target
     target = nil,
+    status_start_tick = 0,
+    -- hyper follow TOP_LEFT -> TOP_RIGHT -> BOTTOM_RIGHT -> BOTTOM_RIGHT -> TOP_LEFT
+    hyper_follow = {
+        id = nil,
+        delay = 5000, -- if stay in FOLLOW over {delay} ms , call hyper_follow
+        state = nil,
+        distance = 2,
+    }
 }
-
--- counter attack
-SKILL_FREQ_LIST = List.new()
 
 -- common command
 

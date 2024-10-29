@@ -6,56 +6,30 @@ local mainSkillLvl = 3
 local freq = 3
 
 --- @param creep Creep
---- @param target_id number
+--- @param target_id number|nil
 local function hyperAttack(creep, target_id)
-    local res = Apis.attack(creep, target_id)
-   
-    -- add
-    if (res == OK) then
-        List.pushright(SKILL_FREQ_LIST, 1)
-    end
-
-    -- check freq
-    if List.size(SKILL_FREQ_LIST) >= freq then
-        -- try use skill
-        if ERR_NOT_IN_RANGE == Apis.skill_attack(creep, target_id, mainSkill, mainSkillLvl) then
-            Apis.moveTo(creep, target_id)
-        else
-            List.clear(SKILL_FREQ_LIST)
-        end
-    end
-
-    return res
+    return Apis.attack(creep, target_id)
 end
+
 
 local handler = {
     ---@param creep Creep
     [States.FOLLOW] = function(self, creep)
-
         -- get distance
         local distance = GetDistanceFromOwner(creep.id)
 
         -- keep distance from owner till state change
         if distance > 3 then
             MoveToOwner(creep.id)
+            return
+        end
+
+        -- check need hyper_follow
+        if creep.hyper_follow and GetTick() > creep.status_start_tick + creep.hyper_follow.delay then
+            creep.hyper_follow.id = creep.owner_id
         end
 
         -- do nothing
-    end,
-    ---@param creep Creep
-    [States.PRE_BATTLE] = function(self, creep)
-        local target = Apis.getEnemy(creep)
-        -- TraceAI('do pre-battle'..target)
-
-        if target ~= nil then
-            -- turn to pre-battle
-            creep.state = States.BATTLE
-            return 
-        end
-       
-        -- -- stay by owner
-        -- TraceAI('do pr-follow')
-        self[States.FOLLOW](self,creep)
     end,
     ---@param creep Creep
     [States.BATTLE] = function(self, creep)
@@ -63,7 +37,7 @@ local handler = {
 
         if target == nil then
             -- turn to pre-battle
-            creep.state = States.PRE_BATTLE
+            Apis.changeState(creep, States.FOLLOW)
         end
 
         -- normal attack
@@ -73,7 +47,7 @@ local handler = {
         if res == ERR_INVALID_TARGET then
             -- turn to pre-battle
             creep.target = nil
-            creep.state = States.PRE_BATTLE
+            Apis.changeState(creep, States.FOLLOW)
         elseif res == ERR_NOT_IN_RANGE then
             Apis.moveTo(creep, target)
         end
@@ -87,6 +61,11 @@ local handler = {
 ---@param creep Creep
 function Filir_run(creep)
     local state = creep.state
+
+    -- auto attack
+    if creep.auto_attack == true and creep.target == nil then
+        Apis.getEnemy(creep)
+    end
 
     handler[state](handler, creep)
 end

@@ -205,13 +205,22 @@ ERR_UNKNOWN = -99
 
 
 --------------------------
---- runtime 
+--- runtime
+--------------------------
 FOLLOW_STICKY = 3000
 
 States = {
     FOLLOW = 'follow',
-	PRE_BATTLE = 'pre-battle',
     BATTLE = 'battle',
     BACK = 'back',
 }
+--------------------------
+
+--------------------------
+--- hyper follow status
+--------------------------
+HF_TOP_LEFT = 1
+HF_TOP_RIGHT = 2
+HF_BOTTOM_RIGHT = 3
+HF_BOTTOM_LEFT = 4
 --------------------------
