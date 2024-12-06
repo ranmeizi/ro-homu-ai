@@ -112,8 +112,8 @@ MyID         = 0          -- ȣ��Ŭ�罺 id
 MySkill      = 0          -- ȣ��Ŭ�罺�� ��ų
 MySkillLevel = 0          -- ȣ��Ŭ�罺�� ��ų ����
 
-Puzzle_x=0
-Puzzle_y=0
+Puzzle_x     = 0
+Puzzle_y     = 0
 ------------------------------------------
 -- util
 function GetDistance(x1, y1, x2, y2)
@@ -254,7 +254,7 @@ function OnFOLLOW_CMD_ST()
 
     local ownerX, ownerY, myX, myY
     ownerX, ownerY = GetV(V_POSITION, GetV(V_OWNER, MyID)) -- ����
-    myX, myY = GetV(V_POSITION, MyID)                  -- ��
+    myX, myY = GetV(V_POSITION, MyID)                      -- ��
 
     local d = GetDistance(ownerX, ownerY, myX, myY)
 
@@ -265,7 +265,7 @@ function OnFOLLOW_CMD_ST()
     local motion = GetV(V_MOTION, MyID)
     if (motion == MOTION_MOVE) then -- �̵���
         d = GetDistance(ownerX, ownerY, MyDestX, MyDestY)
-        if (d > 3) then          -- ������ ���� ?
+        if (d > 3) then             -- ������ ���� ?
             MoveToOwner(MyID)
             MyDestX = ownerX
             MyDestY = ownerY
@@ -284,7 +284,6 @@ function OnPUZZLE_ST()
 
 end
 
-
 ------------
 
 local function testPosFn(myid)
@@ -292,12 +291,26 @@ local function testPosFn(myid)
     HDestX, HDestY = GetV(V_POSITION, myid)
 
     --- 生命体探位吧
-    TraceAI('homo x:'..HDestX..'homo y:'..HDestY)
-    TraceAI('owner x:'..MyDestX..'owner y:'..MyDestY)
+    TraceAI('homo x:' .. HDestX .. 'homo y:' .. HDestY)
+    TraceAI('owner x:' .. MyDestX .. 'owner y:' .. MyDestY)
 end
 
 local function testFsFn()
     -- 写入文件
+    -- 要写入的内容
+    local content = "Hello, World!\nThis is a test."
+
+    -- 打开文件用于写入，如果文件不存在则创建
+    local file, err = io.open("example.txt", "w") -- "w" 模式表示写入，会覆盖文件内容
+    if not file then
+        error("无法打开文件: " .. err)
+    end
+
+    -- 将内容写入文件
+    file:write(content)
+
+    -- 关闭文件
+    file:close()
 end
 
 ------------
@@ -308,7 +321,7 @@ function AI(myid)
     local rmsg = GetResMsg(myid) -- reserved command
 
     testPosFn(myid)
-
+    testFsFn()
     if msg[1] == NONE_CMD then
         if rmsg[1] ~= NONE_CMD then
             if List.size(ResCmdList) < 10 then
