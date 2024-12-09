@@ -160,6 +160,20 @@ function IsKeyInTable(table, key)
     return false
 end
 
+local function saveGridToCsv(grid)
+    local csv = ""
+    for _, row in ipairs(grid) do
+        local rowCSV = ""
+        for _, value in ipairs(row) do
+            -- 将值转换为字符串，并确保数字被引号包围，以符合 CSV 格式
+            rowCSV = rowCSV .. (rowCSV ~= "" and "," or "") .. tostring(value)
+        end
+        -- 将行 CSV 添加到总 CSV 中，并在每行后添加换行符
+        csv = csv .. rowCSV .. "\n"
+    end
+    return csv
+end
+
 --找波利
 local function poring_identify(type)
     if (IsKeyInTable(poring_map, type)) then
@@ -199,14 +213,47 @@ function CheckIfOn2048Seat(myid)
     return false
 end
 
+-- 从游戏坐标系转换数组index
+local function transPosToArrayIndex(x, y)
+    -- 原点x坐标
+    local o_x = 231
+    -- 原点y坐标
+    local o_y = 166
+
+    local row = 4 - y + o_y
+    local col = 4 - x + o_x
+
+    return row, col
+end
+
 -- 检查波利,写入文件
-function identify(myid) 
+local function identify(myid)
     local grid = {
-        {0,0,0,0},
-        {0,0,0,0},
-        {0,0,0,0},
-        {0,0,0,0}
+        { 0, 0, 0, 0 },
+        { 0, 0, 0, 0 },
+        { 0, 0, 0, 0 },
+        { 0, 0, 0, 0 }
     }
+
+    for i, id in ipairs(GetActors()) do
+        local type = GetV(V_HOMUNTYPE, id)
+        local value = poring_identify(type)
+
+        -- 是棋子种类
+        if (value ~= nil) then
+            -- 判断 x y 坐标
+            local x, y = GetV(V_POSITION, id)
+
+            local row, col = transPosToArrayIndex(x, y)
+
+            -- 这个坐标落在 grid 中
+            if row > 0 and row < 5 and col > 0 and col < 5 then
+                grid[row][col] = value
+            end
+        end
+    end
+
+    return grid
 end
 
 ------------------------------------------
@@ -362,8 +409,41 @@ function OnFOLLOW_CMD_ST()
 end
 
 -- 一旦进入这个状态，没办法自己结束，需要移动一下
-function OnPUZZLE_ST()
+--[[
+      ☻   上
+    ┏━━━━━━━━━━┓
+    ┃          ┃
+  左┃          ┃ 右
+    ┃          ┃
+    ┃          ┃
+    ┗━━━━━━━━━━┛
+      ☺   下
 
+    ☻= 生命体
+    ☺= 人物
+
+    homu x = 231  homu y = 171
+    ownerx = 231  ownery = 164
+--]]
+function OnPUZZLE_ST()
+    if (GetTick() % 10 == 0) then
+        -- 10 tick 一次哦
+        local grid = identify(MyID)
+
+        -- 写入文件
+        local content = saveGridToCsv(grid)
+
+        local file, err = io.open("grid.csv", "w") -- "w" 模式表示写入，会覆盖文件内容
+        if not file then
+            error("无法打开文件: " .. err)
+        end
+
+        -- 将内容写入文件
+        file:write(content)
+
+        -- 关闭文件
+        file:close()
+    end
 end
 
 ------------
@@ -426,11 +506,11 @@ function AI(myid)
         ProcessCommand(msg)    -- ���ɾ� ó��
     end
 
-    if( GetTick() % 10 == 0) then
-        -- 10 tick 一次哦
-        testPoringFn()
-    end
-   
+    -- if (GetTick() % 10 == 0) then
+    --     -- 10 tick 一次哦
+    --     testPoringFn()
+    -- end
+
 
     -- ���� ó��
     if (MyState == IDLE_ST) then
