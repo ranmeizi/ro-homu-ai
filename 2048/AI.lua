@@ -69,6 +69,22 @@ function List.size(list)
     return size
 end
 
+---------------------porings-------------------------
+
+local poring_map                  = {
+    [1002] = { name = '波利', value = 2 },
+    [1113] = { name = '土波利', value = 4 },
+    [1031] = { name = '波波利', value = 8 },
+    [1242] = { name = '冰波利', value = 16 },
+    [1613] = { name = '金属波利', value = 32 },
+    [1784] = { name = '石头波利', value = 64 },
+    [1836] = { name = '熔岩波利', value = 128 },
+    [1894] = { name = '雨水波利', value = 256 },
+    [1904] = { name = '炸弹波利', value = 512 },
+    [1582] = { name = '恶魔波利', value = 1024 },
+    [1096] = { name = '天使波利', value = 2048 }
+}
+
 -------------------------------------------------
 --------------------------------
 V_OWNER                           = 0  -- ������ ID			
@@ -131,6 +147,66 @@ function GetDistanceFromOwner(id)
         return -1
     end
     return GetDistance(x1, y1, x2, y2)
+end
+
+--
+function IsKeyInTable(table, key)
+    for k, v in pairs(table) do
+        if k == key then
+            return true
+        end
+    end
+
+    return false
+end
+
+--找波利
+local function poring_identify(type)
+    if (IsKeyInTable(poring_map, type)) then
+        TraceAI('Hi,I find a poring named' .. poring_identify[type].name)
+        return poring_identify[type].value
+    end
+
+    return nil
+end
+
+--[[
+    检查是否进入 2048 的站位
+    你需要将人物和生命体像这样站位
+      ☻   上
+    ┏━━━━━━━━━━┓
+    ┃          ┃
+  左┃          ┃ 右
+    ┃          ┃
+    ┃          ┃
+    ┗━━━━━━━━━━┛
+      ☺   下
+
+    ☻= 生命体
+    ☺= 人物
+
+    homu x = 231  homu y = 171
+    ownerx = 231  ownery = 164
+--]]
+function CheckIfOn2048Seat(myid)
+    MyDestX, MyDestY = GetV(V_POSITION, GetV(V_OWNER, myid))
+    HDestX, HDestY = GetV(V_POSITION, myid)
+
+    if MyDestX == 231 and MyDestY == 164 and HDestX == 231 and HDestY == 171 then
+        return true
+    end
+
+    return false
+end
+
+-- 检查波利,写入文件
+function identify(myid) 
+    local grid = {
+        {0,0,0,0},
+        {0,0,0,0},
+        {0,0,0,0},
+        {0,0,0,0}
+    }
 end
 
 ------------------------------------------
@@ -211,6 +287,12 @@ function OnIDLE_ST()
     local cmd = List.popleft(ResCmdList)
     if (cmd ~= nil) then
         ProcessCommand(cmd) -- ���� ���ɾ� ó��
+        return
+    end
+
+    -- 判断是否要进入 2048 状态
+    if CheckIfOn2048Seat(MyID) then
+        MyState = PUZZLE_ST
         return
     end
 
@@ -313,6 +395,19 @@ local function testFsFn()
     file:close()
 end
 
+local function testPoringFn()
+    local actors = GetActors()
+
+    for i, id in ipairs(actors) do
+        local type = GetV(V_HOMUNTYPE, id)
+        local value = poring_identify(type)
+
+        if (value ~= nil) then
+            TraceAI('see my poring value:' .. value)
+        end
+    end
+end
+
 ------------
 
 function AI(myid)
@@ -320,8 +415,6 @@ function AI(myid)
     local msg = GetMsg(myid)     -- command
     local rmsg = GetResMsg(myid) -- reserved command
 
-    testPosFn(myid)
-    testFsFn()
     if msg[1] == NONE_CMD then
         if rmsg[1] ~= NONE_CMD then
             if List.size(ResCmdList) < 10 then
@@ -332,6 +425,8 @@ function AI(myid)
         List.clear(ResCmdList) -- ���ο� ������ �ԷµǸ� ���� ���ɵ��� �����Ѵ�.
         ProcessCommand(msg)    -- ���ɾ� ó��
     end
+
+    testPoringFn()
 
     -- ���� ó��
     if (MyState == IDLE_ST) then
@@ -345,6 +440,6 @@ function AI(myid)
     elseif (MyState == FOLLOW_CMD_ST) then
         OnFOLLOW_CMD_ST()
     elseif (MyState == PUZZLE_ST) then
-
+        OnPUZZLE_ST()
     end
 end
