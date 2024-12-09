@@ -426,7 +426,11 @@ function AI(myid)
         ProcessCommand(msg)    -- ���ɾ� ó��
     end
 
-    testPoringFn()
+    if( GetTick() % 10 == 0) then
+        -- 10 tick 一次哦
+        testPoringFn()
+    end
+   
 
     -- ���� ó��
     if (MyState == IDLE_ST) then
