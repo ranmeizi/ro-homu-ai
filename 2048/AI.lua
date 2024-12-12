@@ -198,14 +198,13 @@ local function saveGridToCsv(grid)
         -- 将行 CSV 添加到总 CSV 中，并在每行后添加换行符
         csv = csv .. rowCSV .. "\n"
     end
-    TraceAI('end csv value:'..csv)
+    TraceAI('end csv value:' .. csv)
     return csv
 end
 
 --找波利
 local function poring_identify(type)
-    if (IsKeyInTable(poring_map, type)) then
-        TraceAI('Hi,I find a poring named' .. poring_map[type].name)
+    if IsKeyInTable(poring_map, type) then
         return poring_map[type].value
     end
 
@@ -226,7 +225,7 @@ end
 
     ☻= 生命体
     ☺= 人物
-
+169
     homu x = 231  homu y = 171
     ownerx = 231  ownery = 164
 --]]
@@ -246,10 +245,10 @@ local function transPosToArrayIndex(x, y)
     -- 原点x坐标
     local o_x = 231
     -- 原点y坐标
-    local o_y = 166
+    local o_y = 169
 
-    local row = 4 - y + o_y
-    local col = 4 - x + o_x
+    local row = 1 + o_y - y
+    local col = 1 + x - o_x
 
     return row, col
 end
@@ -267,14 +266,17 @@ local function identify(myid)
         local type = GetV(V_HOMUNTYPE, id)
         TraceAI('poring_identify start')
         local value = poring_identify(type)
-        TraceAI('poring_identify end,value=' .. value)
 
         -- 是棋子种类
-        if (value ~= nil) then
+        if value ~= nil then
             -- 判断 x y 坐标
             local x, y = GetV(V_POSITION, id)
 
             local row, col = transPosToArrayIndex(x, y)
+
+            TraceAI('x=' .. x .. 'y=' .. y)
+            TraceAI('value=' .. value)
+            TraceAI('row=' .. row .. ',col=' .. col)
 
             -- 这个坐标落在 grid 中
             if row > 0 and row < 5 and col > 0 and col < 5 then
@@ -455,23 +457,34 @@ end
     homu x = 231  homu y = 171
     ownerx = 231  ownery = 164
 --]]
+
+local counter = 1
+
 function OnPUZZLE_ST()
-    -- 10 tick 一次哦
-    local grid = identify(MyID)
+    counter = counter + 1
 
-    -- 写入文件
-    local content = saveGridToCsv(grid)
+    TraceAI('OnPUZZLE_ST')
 
-    local file, err = io.open("grid.csv", "w") -- "w" 模式表示写入，会覆盖文件内容
-    if not file then
-        error("无法打开文件: " .. err)
+    if counter > 10 then
+        -- 10 tick 一次哦
+        local grid = identify(MyID)
+
+        -- 写入文件
+        local content = saveGridToCsv(grid)
+
+        local file, err = io.open("grid.csv", "w") -- "w" 模式表示写入，会覆盖文件内容
+        if not file then
+            error("无法打开文件: " .. err)
+        end
+
+        -- 将内容写入文件
+        file:write(content)
+
+        -- 关闭文件
+        file:close()
+
+        counter = 1
     end
-
-    -- 将内容写入文件
-    file:write(content)
-
-    -- 关闭文件
-    file:close()
 end
 
 ------------
@@ -510,6 +523,9 @@ local function testPoringFn()
         local type = GetV(V_HOMUNTYPE, id)
         local value = poring_identify(type)
 
+        TraceAI('type=' .. type)
+        TraceAI('value=' .. value)
+
         if (value ~= nil) then
             TraceAI('see my poring value:' .. value)
         end
@@ -538,7 +554,6 @@ function AI(myid)
     --     -- 10 tick 一次哦
     --     testPoringFn()
     -- end
-
 
     -- ���� ó��
     if (MyState == IDLE_ST) then
