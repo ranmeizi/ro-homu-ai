@@ -114,22 +114,48 @@ FOLLOW_CMD_ST                     = 12
 PUZZLE_ST                         = 99 -- 兔美酱眼神开始犀利了起来，开始记录棋盘
 
 
+--------------------------
+MOTION_STAND   = 0
+MOTION_MOVE    = 1
+MOTION_ATTACK  = 2
+MOTION_DEAD    = 3
+MOTION_ATTACK2 = 9
+--------------------------
+
+
+
+
+--------------------------
+-- command
+--------------------------
+NONE_CMD          = 0
+MOVE_CMD          = 1
+STOP_CMD          = 2
+ATTACK_OBJECT_CMD = 3
+ATTACK_AREA_CMD   = 4
+PATROL_CMD        = 5
+HOLD_CMD          = 6
+SKILL_OBJECT_CMD  = 7
+SKILL_AREA_CMD    = 8
+FOLLOW_CMD        = 9
+--------------------------
+
 ------------------------------------------
 -- global variable
 ------------------------------------------
-MyState      = IDLE_ST    -- ������ ���´� �޽�
-MyEnemy      = 0          -- �� id
-MyDestX      = 0          -- ������ x
-MyDestY      = 0          -- ������ y
-MyPatrolX    = 0          -- ���� ������ x
-MyPatrolY    = 0          -- ���� ������ y
-ResCmdList   = List.new() -- ���� ���ɾ� ����Ʈ
-MyID         = 0          -- ȣ��Ŭ�罺 id
-MySkill      = 0          -- ȣ��Ŭ�罺�� ��ų
-MySkillLevel = 0          -- ȣ��Ŭ�罺�� ��ų ����
+MyState           = IDLE_ST    -- ������ ���´� �޽�
+MyEnemy           = 0          -- �� id
+MyDestX           = 0          -- ������ x
+MyDestY           = 0          -- ������ y
+MyPatrolX         = 0          -- ���� ������ x
+MyPatrolY         = 0          -- ���� ������ y
+ResCmdList        = List.new() -- ���� ���ɾ� ����Ʈ
+MyID              = 0          -- ȣ��Ŭ�罺 id
+MySkill           = 0          -- ȣ��Ŭ�罺�� ��ų
+MySkillLevel      = 0          -- ȣ��Ŭ�罺�� ��ų ����
 
-Puzzle_x     = 0
-Puzzle_y     = 0
+Puzzle_x          = 0
+Puzzle_y          = 0
 ------------------------------------------
 -- util
 function GetDistance(x1, y1, x2, y2)
@@ -162,6 +188,7 @@ end
 
 local function saveGridToCsv(grid)
     local csv = ""
+    TraceAI('start create csv')
     for _, row in ipairs(grid) do
         local rowCSV = ""
         for _, value in ipairs(row) do
@@ -171,14 +198,15 @@ local function saveGridToCsv(grid)
         -- 将行 CSV 添加到总 CSV 中，并在每行后添加换行符
         csv = csv .. rowCSV .. "\n"
     end
+    TraceAI('end csv value:'..csv)
     return csv
 end
 
 --找波利
 local function poring_identify(type)
     if (IsKeyInTable(poring_map, type)) then
-        TraceAI('Hi,I find a poring named' .. poring_identify[type].name)
-        return poring_identify[type].value
+        TraceAI('Hi,I find a poring named' .. poring_map[type].name)
+        return poring_map[type].value
     end
 
     return nil
@@ -237,7 +265,9 @@ local function identify(myid)
 
     for i, id in ipairs(GetActors()) do
         local type = GetV(V_HOMUNTYPE, id)
+        TraceAI('poring_identify start')
         local value = poring_identify(type)
+        TraceAI('poring_identify end,value=' .. value)
 
         -- 是棋子种类
         if (value ~= nil) then
@@ -426,24 +456,22 @@ end
     ownerx = 231  ownery = 164
 --]]
 function OnPUZZLE_ST()
-    if (GetTick() % 10 == 0) then
-        -- 10 tick 一次哦
-        local grid = identify(MyID)
+    -- 10 tick 一次哦
+    local grid = identify(MyID)
 
-        -- 写入文件
-        local content = saveGridToCsv(grid)
+    -- 写入文件
+    local content = saveGridToCsv(grid)
 
-        local file, err = io.open("grid.csv", "w") -- "w" 模式表示写入，会覆盖文件内容
-        if not file then
-            error("无法打开文件: " .. err)
-        end
-
-        -- 将内容写入文件
-        file:write(content)
-
-        -- 关闭文件
-        file:close()
+    local file, err = io.open("grid.csv", "w") -- "w" 模式表示写入，会覆盖文件内容
+    if not file then
+        error("无法打开文件: " .. err)
     end
+
+    -- 将内容写入文件
+    file:write(content)
+
+    -- 关闭文件
+    file:close()
 end
 
 ------------
