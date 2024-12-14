@@ -264,7 +264,7 @@ local function identify(myid)
 
     for i, id in ipairs(GetActors()) do
         local type = GetV(V_HOMUNTYPE, id)
-        TraceAI('poring_identify start')
+        local motion = GetV(V_MOTION, id)
         local value = poring_identify(type)
 
         -- 是棋子种类
@@ -274,12 +274,13 @@ local function identify(myid)
 
             local row, col = transPosToArrayIndex(x, y)
 
-            TraceAI('x=' .. x .. 'y=' .. y)
-            TraceAI('value=' .. value)
-            TraceAI('row=' .. row .. ',col=' .. col)
-
             -- 这个坐标落在 grid 中
             if row > 0 and row < 5 and col > 0 and col < 5 then
+                -- 如果目标在grid中但是不是 动作时，抛出异常，进入下一tick
+                if motion ~= MOTION_STAND then
+                    -- 抛出异常
+                    error("next tick")
+                end
                 grid[row][col] = value
             end
         end
@@ -465,7 +466,7 @@ function OnPUZZLE_ST()
 
     TraceAI('OnPUZZLE_ST')
 
-    if counter > 10 then
+    if counter > 1 then
         -- 10 tick 一次哦
         local grid = identify(MyID)
 
