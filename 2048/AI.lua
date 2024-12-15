@@ -154,8 +154,6 @@ MyID              = 0          -- ȣ��Ŭ�罺 id
 MySkill           = 0          -- ȣ��Ŭ�罺�� ��ų
 MySkillLevel      = 0          -- ȣ��Ŭ�罺�� ��ų ����
 
-Puzzle_x          = 0
-Puzzle_y          = 0
 ------------------------------------------
 -- util
 function GetDistance(x1, y1, x2, y2)
@@ -490,48 +488,6 @@ end
 
 ------------
 
-local function testPosFn(myid)
-    MyDestX, MyDestY = GetV(V_POSITION, GetV(V_OWNER, myid))
-    HDestX, HDestY = GetV(V_POSITION, myid)
-
-    --- 生命体探位吧
-    TraceAI('homo x:' .. HDestX .. 'homo y:' .. HDestY)
-    TraceAI('owner x:' .. MyDestX .. 'owner y:' .. MyDestY)
-end
-
-local function testFsFn()
-    -- 写入文件
-    -- 要写入的内容
-    local content = "Hello, World!\nThis is a test."
-
-    -- 打开文件用于写入，如果文件不存在则创建
-    local file, err = io.open("example.txt", "w") -- "w" 模式表示写入，会覆盖文件内容
-    if not file then
-        error("无法打开文件: " .. err)
-    end
-
-    -- 将内容写入文件
-    file:write(content)
-
-    -- 关闭文件
-    file:close()
-end
-
-local function testPoringFn()
-    local actors = GetActors()
-
-    for i, id in ipairs(actors) do
-        local type = GetV(V_HOMUNTYPE, id)
-        local value = poring_identify(type)
-
-        TraceAI('type=' .. type)
-        TraceAI('value=' .. value)
-
-        if (value ~= nil) then
-            TraceAI('see my poring value:' .. value)
-        end
-    end
-end
 
 ------------
 
