@@ -1,0 +1,10 @@
+{
+    "memory": {
+        "state": "IDLE",
+        "target": null,
+        "cmds": []
+    },
+    "control": {
+        "auto_attack": true
+    }
+}
