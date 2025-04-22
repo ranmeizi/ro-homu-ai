@@ -1,4 +1,4 @@
-local json = require("libs/dkjson")
+local json = require('AI_sakray.USER_AI.libs.dkjson')
 
 local file, err = io.open("memory.json", "r")
 if not file then
@@ -12,4 +12,10 @@ file:close()  -- 关闭文件
 
 local data, pos, err = json.decode(content, 1, nil)
 
-print("memory.state:", data.memory.state)
+local options = {
+    indent = true,      -- 美化输出，带缩进和换行
+    level = 0,          -- 初始缩进级别
+    noprotect = false   -- 不保护循环引用
+}
+
+print("memory.state:", json.encode(data,options))
