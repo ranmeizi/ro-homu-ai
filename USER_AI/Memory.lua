@@ -1,6 +1,6 @@
 local json = require('AI_sakray.USER_AI.libs.dkjson')
 
-local filePath = 'memory.json'
+local filePath = 'AI_sakray/memory.json'
 
 Memory = {}
 
@@ -45,11 +45,14 @@ function Memory.store()
     Memory.load = nil
     Memory.store = nil
 
+    TraceAI('Store memory:'..Memory.tick)
+
     local jsonString = json.encode(Memory, options)
 
     local file, err = io.open(filePath, "w") -- "w" 模式表示写入，会覆盖文件内容
 
     if not file then
+        TraceAI('无法打开文件')
         error("无法打开文件: " .. err)
     end
 

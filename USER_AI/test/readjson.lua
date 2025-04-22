@@ -1,6 +1,6 @@
 local json = require('AI_sakray.USER_AI.libs.dkjson')
 
-local file, err = io.open("memory.json", "r")
+local file, err = io.open("AI_sakray/memory.json", "r")
 if not file then
     print("文件打开失败:", err)
     return

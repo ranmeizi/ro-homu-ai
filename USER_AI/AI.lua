@@ -11,16 +11,22 @@ Memory.load()
 local tree = BehaviorTree:new(BehaviorTreeConfig.root)
 
 local function loop(id)
-    -- 运行行为树
-    tree:run()
+    TraceAI("tick:"..Memory.tick)
+    Memory.tick = Memory.tick + 1
+
     -- 保存 memory
     Memory.store()
+
+    -- 运行行为树
+    tree:run()
+    
 end
 
 function AI(id)
     xpcall(function()
         loop(id)
     end, function(err)
+        TraceAI('出错天了噜')
         -- 保存 memory
         Memory.store()
         -- 抛出异常

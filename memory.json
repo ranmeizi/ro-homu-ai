@@ -3,8 +3,8 @@
     "cmds":[],
     "state":"IDLE"
   },
-  "tick":26,
   "control":{
     "auto_attack":true
-  }
+  },
+  "tick":6
 }
