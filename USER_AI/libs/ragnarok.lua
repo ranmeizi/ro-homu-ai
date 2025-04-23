@@ -33,9 +33,12 @@ function GetActors()
   return { 1, 2, 3, 4, 5 }
 end
 
+local counter = 10
+
 ---@return number
 function GetTick()
-  return 1
+  counter = counter + 1
+  return counter
 end
 
 ---@param id number

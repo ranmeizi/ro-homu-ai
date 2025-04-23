@@ -17,3 +17,12 @@ developing
 
 测试 AI loop
 ``lua AI_sakray/USER_AI/test/loop.lua``
+
+```lua AI_sakray/USER_AI/test/test_behavior_tree.lua```
+
+### 基本逻辑
+
+```
+
+```
+
