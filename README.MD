@@ -22,7 +22,13 @@ developing
 
 ### 基本逻辑
 
-```
+- 战斗子树
+
+```mermaid
+flowchart TD
+    BT_1[战斗子树] --> BT_2[Sequence]
+    BT_2 e1@==> BT_3[hi]
+    BT_3 -->BT_4[hi]
+
 
 ```
-

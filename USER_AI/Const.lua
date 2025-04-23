@@ -6,31 +6,31 @@
 -------------------------------------------------
 ---Constant Values used for GetV function
 -------------------------------------------------
-V_OWNER = 0 -- Returns the Homunculus owner’s ID
-V_POSITION = 1 -- Returns the current location’s x,y coordinates
-V_TYPE = 2 -- Defines an object (Not implemented yet)
-V_MOTION = 3 -- Returns the current action
-V_ATTACKRANGE = 4 -- Returns the attack range (Not implemented yet; temporarily set as 1 cell)
-V_TARGET = 5 -- Returns the target of an attack or skill
+V_OWNER = 0            -- Returns the Homunculus owner’s ID
+V_POSITION = 1         -- Returns the current location’s x,y coordinates
+V_TYPE = 2             -- Defines an object (Not implemented yet)
+V_MOTION = 3           -- Returns the current action
+V_ATTACKRANGE = 4      -- Returns the attack range (Not implemented yet; temporarily set as 1 cell)
+V_TARGET = 5           -- Returns the target of an attack or skill
 V_SKILLATTACKRANGE = 6 -- Returns the skill attack range (Not implemented yet)
-V_HOMUNTYPE = 7 -- Returns the type of Homunculus
-V_HP = 8 -- Current HP amount of a Homunculus or its owner
-V_SP = 9 -- Current SP amount of a Homunculus or its owner
-V_MAXHP = 10 -- The maximum HP of a Homunculus or its owner
-V_MAXSP = 11 -- The maximum SP of a Homunculus or its owner
+V_HOMUNTYPE = 7        -- Returns the type of Homunculus
+V_HP = 8               -- Current HP amount of a Homunculus or its owner
+V_SP = 9               -- Current SP amount of a Homunculus or its owner
+V_MAXHP = 10           -- The maximum HP of a Homunculus or its owner
+V_MAXSP = 11           -- The maximum SP of a Homunculus or its owner
 ---------------------------------	
 
 
 --------------------------
 --- V_MOTION
 --------------------------
-MOTION_STAND = 0 -- Standing
-MOTION_MOVE = 1 -- Movement
-MOTION_ATTACK = 2 -- Attack
-MOTION_DEAD = 3 -- Dead
+MOTION_STAND = 0    -- Standing
+MOTION_MOVE = 1     -- Movement
+MOTION_ATTACK = 2   -- Attack
+MOTION_DEAD = 3     -- Dead
 MOTION_BENDDOWN = 5 -- Pick up item, set trap
-MOTION_SIT = 6 -- Sitting down
-MOTION_ATTACK2 = 9 -- Attack
+MOTION_SIT = 6      -- Sitting down
+MOTION_ATTACK2 = 9  -- Attack
 --------------------------
 
 
@@ -38,13 +38,13 @@ MOTION_ATTACK2 = 9 -- Attack
 -- V_HOMUNTYPE
 --------------------------------------------
 
-LIF = 1 -- Lif
-AMISTR = 2 -- Amistr
-FILIR = 3 -- Filir
-VANILMIRTH = 4 -- Vanilmirth
-LIF_H = 5 -- Advanced Lif
-AMISTR_H = 6 -- Advanced Amistr
-FILIR_H = 7 -- Advanced Filir
+LIF = 1          -- Lif
+AMISTR = 2       -- Amistr
+FILIR = 3        -- Filir
+VANILMIRTH = 4   -- Vanilmirth
+LIF_H = 5        -- Advanced Lif
+AMISTR_H = 6     -- Advanced Amistr
+FILIR_H = 7      -- Advanced Filir
 VANILMIRTH_H = 8 -- Advanced Vanilmirth
 
 --------------------------------------------
@@ -63,13 +63,13 @@ STOP_CMD = 2 -- Stop
 
 ATTACT_OBJET_CMD = 3 -- Attack
 
-ATTACK_AREA_CMD = 4 -- Area Attack
+ATTACK_AREA_CMD = 4  -- Area Attack
 -- {x coordinate, y coordinate}
 
 PATROL_CMD = 5 -- Patrol
 -- {x coordinate, y coordinate}
 
-HOLD_CMD = 6 -- Mark
+HOLD_CMD = 6         -- Mark
 
 SKILL_OBJECT_CMD = 7 -- Use Skill
 -- {Selected Level, Type, Target ID}
@@ -117,6 +117,13 @@ ERR_NOT_FOUND = -5
 ERR_INVALID_TARGET = -7
 ERR_NOT_IN_RANGE = -9
 ERR_UNKNOWN = -99
+
+BT_RES = {
+    SUCCESS = 1, -- 节点 成功
+    RUNNING = 2, -- 节点 失败
+    FAILURE = -1 -- 节点 运行中
+}
+
 --------------------------
 
 
