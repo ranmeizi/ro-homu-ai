@@ -2,6 +2,6 @@ local ActionNode = require "AI_sakray.USER_AI.BehaviorTree.Core.ExecutionNodes.A
 
 return ActionNode:new(function ()
     -- 寻找最优敌人
-    print('Action FindBestTarget')
+    -- print('Action FindBestTarget')
     return NodeStates.SUCCESS
 end)

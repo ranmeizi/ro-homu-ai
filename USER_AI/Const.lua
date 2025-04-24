@@ -53,31 +53,31 @@ VANILMIRTH_H = 8 -- Advanced Vanilmirth
 --------------------------
 -- return values for RGetMsg (id), GetResMsg (id)
 --------------------------
-NOME_CMD = 0 -- No Command
+NOME_CMD = 0 -- No Command  生命体好像没有
 
-MOVE_CMD = 1 -- Move
+MOVE_CMD = 1 -- Move    移动      msg[1,134,306]
 -- {Command Number}
 
-STOP_CMD = 2 -- Stop
+STOP_CMD = 2 -- Stop  生命体好像没有
 -- {x coordinate, y coordinate}
 
-ATTACT_OBJET_CMD = 3 -- Attack
+ATTACT_OBJET_CMD = 3 -- Attack   攻击   msg[3,110256278]
 
-ATTACK_AREA_CMD = 4  -- Area Attack
+ATTACK_AREA_CMD = 4  -- Area Attack  生命体好像没有
 -- {x coordinate, y coordinate}
 
-PATROL_CMD = 5 -- Patrol
+PATROL_CMD = 5 -- Patrol  巡逻 生命体好像没有
 -- {x coordinate, y coordinate}
 
-HOLD_CMD = 6         -- Mark
+HOLD_CMD = 6         -- Mark  生命体好像没有
 
-SKILL_OBJECT_CMD = 7 -- Use Skill
+SKILL_OBJECT_CMD = 7 -- Use Skill    使用技能    msg[7,5,8009,110256278]
 -- {Selected Level, Type, Target ID}
 
 SKILL_AREA_CMD = 8 -- Use Area Attack Skill
 -- {Selected Level, Type, x coordinate, y coordinate}
 
-FOLLOW_CMD = 9 -- Follow Its Owner
+FOLLOW_CMD = 9 -- Follow Its Owner  alt + t
 --------------------------
 
 

@@ -1,6 +1,7 @@
 require 'AI_sakray.USER_AI.Const'
 require 'AI_sakray.USER_AI.Util'
 require 'AI_sakray.USER_AI.Memory'
+local json = require('AI_sakray.USER_AI.libs.dkjson')
 local BehaviorTree = require 'AI_sakray.USER_AI.BehaviorTree.Core.BehaviorTree'
 
 local TestingBT = require 'AI_sakray.USER_AI.HOMU.Testing_behavior'
@@ -28,10 +29,20 @@ Blackboard = {
 local tree = BehaviorTree:new(TestingBT.root)
 
 local function loop(id)
-    TraceAI("tick:" .. Memory.tick)
+    local msg	= GetMsg (id)			-- command
+	local rmsg	= GetResMsg (id)		-- reserved command
+
+    
+    if msg then
+        TraceAI('msg'..json.encode(msg))
+    end
+
+    if rmsg then
+        TraceAI('rmsg'..json.encode(rmsg))
+    end
+
+    -- TraceAI("tick:" .. Memory.tick)
     Memory.tick = Memory.tick + 1
-
-
 
     -- 运行行为树
     tree:run()
