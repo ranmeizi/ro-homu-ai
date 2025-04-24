@@ -10,7 +10,7 @@ end
 
 function Failer:execute()
     self.child:execute()
-    return false
+    return NodeStates.FAILURE
 end
 
 return Failer

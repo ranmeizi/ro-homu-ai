@@ -12,7 +12,7 @@ function ConditionNode:execute()
     if self.condition then
         return self.condition()
     end
-    return false
+    return NodeStates.FAILURE
 end
 
 return ConditionNode

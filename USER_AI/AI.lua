@@ -2,38 +2,51 @@ require 'AI_sakray.USER_AI.Const'
 require 'AI_sakray.USER_AI.Util'
 require 'AI_sakray.USER_AI.Memory'
 local BehaviorTree = require 'AI_sakray.USER_AI.BehaviorTree.Core.BehaviorTree'
-local BehaviorTreeConfig = require 'AI_sakray.USER_AI.Config.BehaviorTreeConfig'
+
+local TestingBT = require 'AI_sakray.USER_AI.HOMU.Testing_behavior'
 
 -- 读取 memory
 Memory.load()
 
 -- 全局黑板
-Blackboard={
+Blackboard = {
+    memory = Memory, -- 需要持久化的数据
 
+    --[Running 任务记录]
+    task = nil,
+
+    -- 调用 Environment 记录 objects
+    objects = {
+        -- 怪物列表
+        monsters = {},
+        -- 永远到达不了的目标，MoveTo timeout 的目标加进去
+        unreachable = {},
+    }
 }
 
 -- 初始化行为树
-local tree = BehaviorTree:new(BehaviorTreeConfig.root)
+local tree = BehaviorTree:new(TestingBT.root)
 
 local function loop(id)
-    TraceAI("tick:"..Memory.tick)
+    TraceAI("tick:" .. Memory.tick)
     Memory.tick = Memory.tick + 1
 
 
 
     -- 运行行为树
     tree:run()
-    
 end
 
 function AI(id)
     xpcall(function()
         loop(id)
     end, function(err)
-        TraceAI('出错天了噜')
+        TraceAI('出错天了噜' .. tostring(err))
         -- 保存 memory
-        Memory.store()
+
+        -- 打印堆栈信息
+        TraceAI(debug.traceback(err))
         -- 抛出异常
-        error(err)
+        -- error(err)
     end)
 end

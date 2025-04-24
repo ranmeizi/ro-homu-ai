@@ -10,11 +10,11 @@ end
 
 function Selector:execute()
     for _, child in ipairs(self.children) do
-        if child:execute() then
-            return true
+        if child:execute() == NodeStates.SUCCESS then
+            return NodeStates.SUCCESS
         end
     end
-    return false
+    return NodeStates.FAILURE
 end
 
 return Selector

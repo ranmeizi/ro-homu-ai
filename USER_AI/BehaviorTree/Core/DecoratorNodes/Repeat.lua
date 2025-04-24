@@ -11,11 +11,11 @@ end
 
 function Repeat:execute()
     for i = 1, self.times do
-        if not self.child:execute() then
-            return false
+        if self.child:execute() == NodeStates.FAILURE then
+            return NodeStates.FAILURE
         end
     end
-    return true
+    return NodeStates.SUCCESS
 end
 
 return Repeat

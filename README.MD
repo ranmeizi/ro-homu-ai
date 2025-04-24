@@ -20,15 +20,45 @@ developing
 
 ```lua AI_sakray/USER_AI/test/test_behavior_tree.lua```
 
+### 行为树设计
+
+#### Task 跨Tick的任务
+
+全局只有唯一一个跨Tick的任务，因为生命体也不能同时干2件事，那该乱了。
+通过 blackboard 记录这个任务的信息，第二次执行通过 Condition 检查是否有当前任务信息，如果返回不是running，才会清除这个任务，走到下个节点，也就是说 任务模块是优先级相当高的一个节点。
+
+#### Core下实现了基础节点以及装饰节点
+
+装饰节点没测过，用的时候再改吧
+
 ### 基本逻辑
 
-- 战斗子树
-
+- Test 行为树
+测试用的 瞎写
 ```mermaid
 flowchart TD
-    BT_1[战斗子树] --> BT_2[Sequence]
-    BT_2 e1@==> BT_3[hi]
-    BT_3 -->BT_4[hi]
-
-
+    Root[Sequence root] --> N1[Action ResCommand 接收命令]
+    Root --> N2[TaskModule]
+    N2 --> N3[Sequence]
+    subgraph task[任务模块 这个可能用代码实现，不走节点]
+        N3 --> Task_cond{Condition 有无任务}
+        N3 --> Task[任务执行]
+        Task --> Task_n1[Selector]
+        Task_n1 --> Task_cond1{Condition 是FilirFarm?}
+        Task_n1 --> Task_cond2{Condition 是Kiting?}
+        Task_cond1 --> Task_n2[Selector] 
+        Task_n2 --> Task_cond3{Condition 是filir?}
+        Task_cond3 --> Task_Farm_filir
+        subgraph filir_farm[飞里乐练级]
+            Task_Farm_filir[Sequence] --> tff_n1[Action FindBestTarget 寻敌]
+            Task_Farm_filir-->tff_cond1{Condition 有target?}
+            Task_Farm_filir-->tff_n3[Action Kill 杀敌]
+        end
+        Task_n2 --> Task_cond4{Condition 是其他?}
+        Task_cond2 --> Task_none[我只是写个例子，这个很久以后开发]
+    end
+    Root -->N4[Action Enviroment环境监测]
+   
 ```
+
+- Filir 行为树

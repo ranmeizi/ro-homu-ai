@@ -118,7 +118,7 @@ ERR_INVALID_TARGET = -7
 ERR_NOT_IN_RANGE = -9
 ERR_UNKNOWN = -99
 
-BT_RES = {
+NodeStates = {
     SUCCESS = 1, -- 节点 成功
     RUNNING = 2, -- 节点 失败
     FAILURE = -1 -- 节点 运行中

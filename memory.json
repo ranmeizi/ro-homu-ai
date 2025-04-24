@@ -1,10 +1,10 @@
 {
   "memory":{
-    "cmds":[],
-    "state":"IDLE"
+    "state":"IDLE",
+    "cmds":[]
   },
   "control":{
     "auto_attack":true
   },
-  "tick":6
+  "tick":8
 }

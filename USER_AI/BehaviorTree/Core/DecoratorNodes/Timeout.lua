@@ -17,7 +17,7 @@ function Timeout:execute()
 
     if GetTick() - self.startTime > self.duration then
         self.startTime = nil
-        return false
+        return NodeStates.FAILURE
     end
 
     return self.child:execute()

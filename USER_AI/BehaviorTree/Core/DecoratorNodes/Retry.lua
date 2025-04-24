@@ -11,11 +11,11 @@ end
 
 function Retry:execute()
     for i = 1, self.maxRetries do
-        if self.child:execute() then
-            return true
+        if self.child:execute()==NodeStates.SUCCESS then
+            return NodeStates.SUCCESS
         end
     end
-    return false
+    return NodeStates.FAILURE
 end
 
 return Retry

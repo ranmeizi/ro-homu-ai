@@ -10,7 +10,7 @@ end
 
 function Succeeder:execute()
     self.child:execute()
-    return true
+    return NodeStates.SUCCESS
 end
 
 return Succeeder

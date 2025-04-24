@@ -16,7 +16,7 @@ function Cooldown:execute()
         self.lastExecution = currentTick
         return self.child:execute()
     end
-    return false
+    return NodeStates.FAILURE
 end
 
 return Cooldown

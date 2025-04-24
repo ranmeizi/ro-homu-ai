@@ -12,7 +12,7 @@ function ActionNode:execute()
     if self.action then
         return self.action()
     end
-    return false
+    return NodeStates.FAILURE
 end
 
 return ActionNode

@@ -9,7 +9,11 @@ function Inverter:new(child)
 end
 
 function Inverter:execute()
-    return not self.child:execute()
+    if self.child:execute() == NodeStates.FAILURE then
+        return NodeStates.SUCCESS
+    else
+        return NodeStates.FAILURE
+    end
 end
 
 return Inverter

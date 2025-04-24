@@ -10,11 +10,11 @@ end
 
 function Sequence:execute()
     for _, child in ipairs(self.children) do
-        if not child:execute() then
-            return false
+        if child:execute() == NodeStates.FAILURE then
+            return NodeStates.FAILURE
         end
     end
-    return true
+    return NodeStates.SUCCESS
 end
 
 return Sequence
