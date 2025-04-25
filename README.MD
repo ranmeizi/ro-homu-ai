@@ -31,6 +31,66 @@ developing
 
 装饰节点没测过，用的时候再改吧
 
+### 命令设计
+
+基本只有 alt+t 和 alt+左键 可以发命令，那么就用这些组合设计一套命令系统。
+
+```mermaid
+flowchart TD
+    cmd_n1[Selector 命令系统]
+    cmd_cond{是否按下 alt+t?}
+    cmd_cond_move{是否下达 Move 命令 ==1?}
+    cmd_cond_attack{是否下达 Attack 命令 ==3?}
+    cmd_cond_skill{是否下达 Skill 命令 ==7?}
+    cmd_cond_y[Selector 等候组合命令]
+    cmd_cond_n[Failer]
+    cmd_timeout_1[Timeout 接下来 X tick内]
+    cmd_timeout_fail[Timeout 超时 清空队列]
+    cmd_seq_1[Selector Options]
+    cmd_cond_opt{是否按下 alt+t?}
+    cmd_cond_opt1{是下达move位置1 TOP_LEFT?}
+    cmd_cond_opt2{是下达move位置2 TOP?}
+    cmd_cond_opt3{是下达move位置3 TOP_RIGHT?}
+    cmd_cond_opt4{是下达move位置4 RIGHT?}
+    cmd_cond_opt5{是下达move位置5 BOTTOM_RIGHT?}
+    cmd_cond_opt6{是下达move位置6 BOTTOM?}
+    cmd_cond_opt7{是下达move位置7 BOTTOM_LEFT?}
+    cmd_cond_opt8{是下达move位置8 LEFT?}
+    opt[放弃任务]
+    opt_todo[预留]
+    attack[中断任务#设置 Kill Task]
+    skill[中断任务#Action 试着放技能]
+    move[中断任务#设置 MoveTo Task]
+
+    cmd_n1 --> cmd_cond
+    cmd_n1 --> cmd_cond_move --> move
+    cmd_n1 --> cmd_cond_attack --> attack
+    cmd_n1 --> cmd_cond_skill --> skill
+    cmd_cond -->|Yes| cmd_cond_y
+    cmd_cond -->|No| cmd_cond_n
+    cmd_cond_y --> cmd_timeout_1
+    cmd_cond_y --> cmd_timeout_fail
+    cmd_timeout_1 --> cmd_seq_1
+    cmd_seq_1 --> cmd_cond_opt
+    cmd_seq_1 --> cmd_cond_opt1
+    cmd_seq_1 --> cmd_cond_opt2
+    cmd_seq_1 --> cmd_cond_opt3
+    cmd_seq_1 --> cmd_cond_opt4
+    cmd_seq_1 --> cmd_cond_opt5
+    cmd_seq_1 --> cmd_cond_opt6
+    cmd_seq_1 --> cmd_cond_opt7
+    cmd_seq_1 --> cmd_cond_opt8
+    cmd_cond_opt --> |Yes| opt
+    cmd_cond_opt1 --> |Yes| opt_todo
+    cmd_cond_opt2 --> |Yes| opt_todo
+    cmd_cond_opt3 --> |Yes| opt_todo
+    cmd_cond_opt4 --> |Yes| opt_todo
+    cmd_cond_opt5 --> |Yes| opt_todo
+    cmd_cond_opt6 --> |Yes| opt_todo
+    cmd_cond_opt7 --> |Yes| opt_todo
+    cmd_cond_opt8 --> |Yes| opt_todo
+```
+
 ### 基本逻辑
 
 - Test 行为树
@@ -59,6 +119,18 @@ flowchart TD
     end
     Root -->N4[Action Enviroment环境监测]
    
+```
+
+命令模块
+```mermaid
+flowchart TD
+    Comd[命令模块]
+```
+
+任务模块
+```mermaid
+flowchart TD
+    Comd[任务模块]
 ```
 
 - Filir 行为树

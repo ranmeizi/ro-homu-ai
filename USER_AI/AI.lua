@@ -13,11 +13,27 @@ Memory.load()
 Blackboard = {
     memory = Memory, -- 需要持久化的数据
 
-    --[Running 任务记录]
+    target_id = nil, -- 目标(不一定是攻击对象，也有可能有些整活用这个)
+
+    attack_id = nil, -- 攻击目标
+
+    -- 任务记录
     task = nil,
+
+    -- 任务队列
+    task_queue = List:new(),
 
     -- 调用 Environment 记录 objects
     objects = {
+        -- 生命值
+        hp = nil,
+        -- 最大生命值
+        hp_max = nil,
+        -- 魔法值
+        sp = nil,
+        -- 最大魔法值
+        sp_max = nil,
+
         -- 怪物列表
         monsters = {},
         -- 永远到达不了的目标，MoveTo timeout 的目标加进去
@@ -29,16 +45,16 @@ Blackboard = {
 local tree = BehaviorTree:new(TestingBT.root)
 
 local function loop(id)
-    local msg	= GetMsg (id)			-- command
-	local rmsg	= GetResMsg (id)		-- reserved command
+    local msg = GetMsg(id)   -- command
+    local rmsg = GetResMsg(id) -- reserved command
 
-    
+
     if msg then
-        TraceAI('msg'..json.encode(msg))
+        TraceAI('msg' .. json.encode(msg))
     end
 
     if rmsg then
-        TraceAI('rmsg'..json.encode(rmsg))
+        TraceAI('rmsg' .. json.encode(rmsg))
     end
 
     -- TraceAI("tick:" .. Memory.tick)
