@@ -41,7 +41,10 @@ end
 ---@params type 1|3|7|9
 local function createCmdCondition(index, type)
     return function()
-        local cmd = Blackboard.cmds[index]
+        local cmd = index == 1
+            and Blackboard.cmds[Blackboard.cmds.first]
+            or Blackboard.cmds[Blackboard.cmds.last]
+
         if cmd ~= nil and cmd[1] == 1 then
             createMoveToTask()
             return NodeStates.SUCCESS

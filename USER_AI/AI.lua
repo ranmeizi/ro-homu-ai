@@ -1,7 +1,7 @@
 require 'AI_sakray.USER_AI.Const'
 require 'AI_sakray.USER_AI.Util'
 require 'AI_sakray.USER_AI.Memory'
-local json = require('AI_sakray.USER_AI.libs.dkjson')
+
 local BehaviorTree = require 'AI_sakray.USER_AI.BehaviorTree.Core.BehaviorTree'
 
 local TestingBT = require 'AI_sakray.USER_AI.HOMU.Testing_behavior'
@@ -56,7 +56,7 @@ Blackboard = {
 local tree = BehaviorTree:new(TestingBT.root)
 
 local function loop(id)
-    TraceAI('AI loop start'..json.encode(Blackboard.task))
+    TraceAI('AI loop start')
     -- 记录id
     Blackboard.id = id
 
