@@ -1,0 +1,40 @@
+local Node = require("AI_sakray.USER_AI.BehaviorTree.Core.Node")
+local TaskNode = setmetatable({}, { __index = Node })
+TaskNode.__index = TaskNode
+
+function TaskNode:new(child)
+    local node = setmetatable(Node.new(self), self)
+    node.child = child
+    return node
+end
+
+function TaskNode:execute()
+    local task = Blackboard.task
+
+    -- 执行子节点
+    local status = self.child:execute(task)
+
+    if status == NodeStates.RUNNING then
+        -- 如果子节点返回 RUNNING，保持任务不变
+        return NodeStates.SUCCESS
+    elseif status == NodeStates.SUCCESS or status == NodeStates.FAILURE then
+        -- 如果子节点返回 SUCCESS 或 FAILURE，清除当前任务
+        TraceAI("TaskNode: 当前任务完成，状态: " .. (status == NodeStates.SUCCESS and "SUCCESS" or "FAILURE"))
+        Blackboard.task = nil
+
+        -- 从任务队列中取下一个任务
+        local nextTask = List.popleft(Blackboard.task_queue)
+        if nextTask then
+            Blackboard.task = nextTask
+            TraceAI("TaskNode: 从任务队列中取出新任务: " .. tostring(nextTask.name))
+            return NodeStates.SUCCESS
+        else
+            TraceAI("TaskNode: 没有任务可执行")
+            return NodeStates.FAILURE
+        end
+    end
+
+    return status
+end
+
+return TaskNode

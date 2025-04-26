@@ -120,6 +120,7 @@ ERR_UNKNOWN = -99
 
 NodeStates = {
     SUCCESS = 1, -- 节点 成功
+    RUNNING = 0, -- 节点 运行中
     FAILURE = -1 -- 节点 运行中
 }
 

@@ -1,6 +1,7 @@
 # ragnarok homuculus ai
 
-developing
+最好给重命名一下哦
+```git clone https://github.com/ranmeizi/ro-homu-ai.git AI_sakray```
 
 ## test
 

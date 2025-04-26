@@ -1,7 +1,8 @@
 local Farm = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Farm'
+local MoveTo = require 'AI_sakray.USER_AI.BehaviorTree.common.task.MoveTo'
 
 local handlers = {
-    Farm = Farm
+    MoveTo = MoveTo
 }
 
 local TaskModule = {
@@ -28,11 +29,7 @@ function TaskModule.execute()
 
     TraceAI('TaskModule Success')
 
-    if handler.execute() ~= NodeStates.SUCCESS then
-        -- 结束任务?
-    end
-
-    return NodeStates.SUCCESS
+    return handler.execute()
 end
 
 return TaskModule

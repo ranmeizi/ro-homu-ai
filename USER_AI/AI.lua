@@ -11,17 +11,28 @@ Memory.load()
 
 -- 全局黑板
 Blackboard = {
+    id = nil,        -- 生命体id
+
     memory = Memory, -- 需要持久化的数据
 
     target_id = nil, -- 目标(不一定是攻击对象，也有可能有些整活用这个)
 
     attack_id = nil, -- 攻击目标
 
-    -- 任务记录
+    -- 客户端发送命令列表
+    cmds = List.new(),
+
+    --[[
+        任务记录
+        {
+            name: '任务名称',
+            ... 按任务定义的动态参数类型
+        }
+    ]] --
     task = nil,
 
     -- 任务队列
-    task_queue = List:new(),
+    task_queue = List.new(),
 
     -- 调用 Environment 记录 objects
     objects = {
@@ -45,20 +56,10 @@ Blackboard = {
 local tree = BehaviorTree:new(TestingBT.root)
 
 local function loop(id)
-    local msg = GetMsg(id)   -- command
-    local rmsg = GetResMsg(id) -- reserved command
+    -- 记录id
+    Blackboard.id = id
 
-
-    if msg then
-        TraceAI('msg' .. json.encode(msg))
-    end
-
-    if rmsg then
-        TraceAI('rmsg' .. json.encode(rmsg))
-    end
-
-    -- TraceAI("tick:" .. Memory.tick)
-    Memory.tick = Memory.tick + 1
+    Memory.tick = GetTick()
 
     -- 运行行为树
     tree:run()
