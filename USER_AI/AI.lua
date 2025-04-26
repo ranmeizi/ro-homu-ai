@@ -56,6 +56,7 @@ Blackboard = {
 local tree = BehaviorTree:new(TestingBT.root)
 
 local function loop(id)
+    TraceAI('AI loop start'..json.encode(Blackboard.task))
     -- 记录id
     Blackboard.id = id
 

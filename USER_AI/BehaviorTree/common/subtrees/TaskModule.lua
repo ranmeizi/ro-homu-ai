@@ -29,7 +29,7 @@ function TaskModule.execute()
 
     TraceAI('TaskModule Success')
 
-    return handler.execute()
+    return handler:execute()
 end
 
 return TaskModule

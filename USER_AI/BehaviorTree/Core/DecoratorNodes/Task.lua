@@ -9,10 +9,8 @@ function TaskNode:new(child)
 end
 
 function TaskNode:execute()
-    local task = Blackboard.task
-
     -- 执行子节点
-    local status = self.child:execute(task)
+    local status = self.child:execute()
 
     if status == NodeStates.RUNNING then
         -- 如果子节点返回 RUNNING，保持任务不变

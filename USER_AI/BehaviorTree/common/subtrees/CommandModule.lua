@@ -3,17 +3,19 @@ local ConditionNode = require 'AI_sakray.USER_AI.BehaviorTree.Core.ExecutionNode
 local Selector = require 'AI_sakray.USER_AI.BehaviorTree.Core.ControlNodes.Selector'
 local Sequence = require 'AI_sakray.USER_AI.BehaviorTree.Core.ControlNodes.Sequence'
 local ResCommand = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.ResCommand'
-
+local Succeeder = require 'AI_sakray.USER_AI.BehaviorTree.Core.DecoratorNodes.Succeeder'
+local json = require('AI_sakray.USER_AI.libs.dkjson')
 --- 创建 MoveTo Task
 --- [MoveTo.lua](${workspaceFolder}/USER_AI/BehaviorTree/common/task/MoveTo.lua)
 local function createMoveToTask()
     -- 消费 cmds
-    local _, x, y = List.popleft(Blackboard.cmds)
+    local cmd = List.popleft(Blackboard.cmds)
+
     -- 创建一个 MoveTo Task
     Blackboard.task = {
         name = 'MoveTo',
-        pos_x = x,
-        pos_y = y
+        pos_x = cmd[2],
+        pos_y = cmd[3]
     }
 end
 
@@ -23,7 +25,7 @@ local function tryJumpTask(createTaskFn)
         -- 把当前 task leftpush 到 task_queue
         local currTask = Blackboard.task
 
-        if currTask ~ -nil then
+        if currTask ~= nil then
             Blackboard.task = nil
             List.pushleft(Blackboard.task_queue, currTask)
         end
@@ -40,7 +42,8 @@ end
 local function createCmdCondition(index, type)
     return function()
         local cmd = Blackboard.cmds[index]
-        if cmd[1] == type then
+        if cmd ~= nil and cmd[1] == 1 then
+            createMoveToTask()
             return NodeStates.SUCCESS
         else
             return NodeStates.FAILURE
@@ -50,19 +53,24 @@ end
 
 local CommandModule = Sequence:new({
     -- 获取消息
-    ResCommand:new(),
+    ResCommand,
     -- 判断
-    Selector:new({
-        Sequence:new({
-            -- 判断第一位是不是 FOLLOW_CMD,如果是，进入后续 x tick 的第二 cmd 的判断
-            ConditionNode(createCmdCondition(1, FOLLOW_CMD)),
-            -- Timeout节点
-        }),
-        Sequence:new({
-            -- 判断第一位是不是 MOVE_CMD
-            ConditionNode:new(createCmdCondition(1, MOVE_CMD)),
-            -- 插队一个 MoveTo Task
-            ActionNode:new(tryJumpTask(createMoveToTask))
-        }),
-    })
+    Succeeder:new(
+        Selector:new({
+            Sequence:new({
+                -- 判断第一位是不是 FOLLOW_CMD,如果是，进入后续 x tick 的第二 cmd 的判断
+                ConditionNode:new(createCmdCondition(1, FOLLOW_CMD)),
+                -- Timeout节点
+            }),
+            Sequence:new({
+                -- 判断第一位是不是 MOVE_CMD
+                ConditionNode:new(createCmdCondition(1, MOVE_CMD)),
+                -- 插队一个 MoveTo Task
+                ActionNode:new(tryJumpTask(createMoveToTask))
+            }),
+
+        })
+    )
 })
+
+return CommandModule

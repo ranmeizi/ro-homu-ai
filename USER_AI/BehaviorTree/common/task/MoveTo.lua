@@ -6,15 +6,21 @@
 
 local ActionNode = require('AI_sakray.USER_AI.BehaviorTree.Core.ExecutionNodes.ActionNode')
 local Task = require('AI_sakray.USER_AI.BehaviorTree.Core.DecoratorNodes.Task')
+local json = require('AI_sakray.USER_AI.libs.dkjson')
 
 return Task:new(
     ActionNode:new(function()
+
+        TraceAI('Action MoveTo')
+
         ---@class MoveToTask
         ---@field name 'MoveTo'
         ---@field pos_x number|nil  要么给 xy 要么给 target_id
         ---@field pos_y number|nil
         ---@field target_id number|nil
         local task = Blackboard.task
+
+        TraceAI('看一下任务'..json.encode(task))
 
         -- 目标
         if task.target_id == nil and (task.pos_x == nil or task.pos_y == nil) then
