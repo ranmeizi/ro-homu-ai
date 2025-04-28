@@ -2,10 +2,12 @@
 _G.json = require('AI_sakray/USER_AI/libs/dkjson')
 _G.Array = require('AI_sakray/USER_AI/libs/ArrayLike')
 
+
 require 'AI_sakray.USER_AI.Const'
 require 'AI_sakray.USER_AI.Util'
 require 'AI_sakray.USER_AI.Memory'
 require('AI_sakray/USER_AI/BehaviorTree/Core/init')
+
 
 local TestingBT = require 'AI_sakray.USER_AI.HOMU.Testing_behavior'
 

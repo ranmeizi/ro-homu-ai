@@ -35,7 +35,6 @@ end
 function ArrayLike:get(
 	index -- index from 1 (head) to length (tail)
 )
-	assert(self:in_bounds(index))
 	return self[self._head_index + index]
 end
 

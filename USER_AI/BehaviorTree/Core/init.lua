@@ -1,18 +1,18 @@
 -- 把 Core 全挂全局上
 
-_G.Selector = require('./ControlNodes/Selector')
-_G.Sequence = require('./ControlNodes/Sequence')
+_G.Selector = require('AI_sakray/USER_AI/BehaviorTree/Core/ControlNodes/Selector')
+_G.Sequence = require('AI_sakray/USER_AI/BehaviorTree/Core/ControlNodes/Sequence')
 
-_G.Cooldown = require('./DecoratorNodes/Cooldown')
-_G.Failer = require('./DecoratorNodes/Failer')
-_G.Inverter = require('./DecoratorNodes/Inverter')
-_G.Repeat = require('./DecoratorNodes/Repeat')
-_G.Retry = require('./DecoratorNodes/Retry')
-_G.Succeeder = require('./DecoratorNodes/Succeeder')
-_G.Task = require('./DecoratorNodes/Task')
-_G.Timeout = require('./DecoratorNodes/Timeout')
+_G.Cooldown = require('AI_sakray/USER_AI/BehaviorTree/Core/DecoratorNodes/Cooldown')
+_G.Failer = require('AI_sakray/USER_AI/BehaviorTree/Core/DecoratorNodes/Failer')
+_G.Inverter = require('AI_sakray/USER_AI/BehaviorTree/Core/DecoratorNodes/Inverter')
+_G.Repeat = require('AI_sakray/USER_AI/BehaviorTree/Core/DecoratorNodes/Repeat')
+_G.Retry = require('AI_sakray/USER_AI/BehaviorTree/Core/DecoratorNodes/Retry')
+_G.Succeeder = require('AI_sakray/USER_AI/BehaviorTree/Core/DecoratorNodes/Succeeder')
+_G.Task = require('AI_sakray/USER_AI/BehaviorTree/Core/DecoratorNodes/Task')
+_G.Timeout = require('AI_sakray/USER_AI/BehaviorTree/Core/DecoratorNodes/Timeout')
 
-_G.ActionNode = require('./ExecutionNodes/ActionNode')
-_G.ConditionNode = require('./ExecutionNodes/ConditionNode')
+_G.ActionNode = require('AI_sakray/USER_AI/BehaviorTree/Core/ExecutionNodes/ActionNode')
+_G.ConditionNode = require('AI_sakray/USER_AI/BehaviorTree/Core/ExecutionNodes/ConditionNode')
 
-_G.BehaviorTree = require('./BehaviorTree')
+_G.BehaviorTree = require('AI_sakray/USER_AI/BehaviorTree/Core/BehaviorTree')
