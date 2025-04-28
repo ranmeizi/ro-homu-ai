@@ -1,15 +1,11 @@
-local ActionNode = require 'AI_sakray.USER_AI.BehaviorTree.Core.ExecutionNodes.ActionNode'
-local ConditionNode = require 'AI_sakray.USER_AI.BehaviorTree.Core.ExecutionNodes.ConditionNode'
-local Selector = require 'AI_sakray.USER_AI.BehaviorTree.Core.ControlNodes.Selector'
-local Sequence = require 'AI_sakray.USER_AI.BehaviorTree.Core.ControlNodes.Sequence'
 local ResCommand = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.ResCommand'
-local Succeeder = require 'AI_sakray.USER_AI.BehaviorTree.Core.DecoratorNodes.Succeeder'
-local json = require('AI_sakray.USER_AI.libs.dkjson')
+
 --- 创建 MoveTo Task
 --- [MoveTo.lua](${workspaceFolder}/USER_AI/BehaviorTree/common/task/MoveTo.lua)
 local function createMoveToTask()
     -- 消费 cmds
-    local cmd = List.popleft(Blackboard.cmds)
+    local cmd = Blackboard.cmds:shift()
+
 
     -- 创建一个 MoveTo Task
     Blackboard.task = {
@@ -42,8 +38,8 @@ end
 local function createCmdCondition(index, type)
     return function()
         local cmd = index == 1
-            and Blackboard.cmds[Blackboard.cmds.first]
-            or Blackboard.cmds[Blackboard.cmds.last]
+            and Blackboard.cmds:get(1)
+            or Blackboard.cmds:get(2)
 
         if cmd ~= nil and cmd[1] == 1 then
             createMoveToTask()
@@ -56,7 +52,7 @@ end
 
 local CommandModule = Sequence:new({
     -- 获取消息
-    ResCommand,
+    ActionNode:new(ResCommand),
     -- 判断
     Succeeder:new(
         Selector:new({

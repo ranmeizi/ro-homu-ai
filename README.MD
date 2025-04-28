@@ -135,3 +135,12 @@ flowchart TD
 ```
 
 - Filir 行为树
+
+
+Farm 逻辑
+
+寻敌 -> kill target
+
+kill target 逻辑
+
+moveTo

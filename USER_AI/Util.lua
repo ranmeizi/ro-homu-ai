@@ -65,6 +65,50 @@ function List.size(list)
 	return size
 end
 
+------------------------------------
+---Array
+------------------------------------
+
+ArrayLike = {}
+
+function ArrayLike:new(table)
+	local arr = {
+		length = 0
+	}
+	if table ~= nil then
+		for index, value in ipairs(table) do
+			arr[index] = value
+			arr.length = arr.length + 1
+		end
+	end
+	return setmetatable(arr, {
+		__index = ArrayLike,
+		__tojson = function(t)
+			local cleaned = {}
+			for k, v in pairs(t) do
+				if type(v) == "function" then
+					-- cleaned[k] = v.toString()
+				else
+					if k == 'length' then
+						print()
+					else
+						cleaned[k] = v
+					end
+				end
+				return json.encode(cleaned)
+			end
+		end
+	})
+end
+
+function ArrayLike:push(item)
+	local pushIndex = self.length + 1
+	self[pushIndex] = item
+	self.length = pushIndex + 1
+end
+
+------------------------------------
+
 -------------------------------------------------
 ---util
 

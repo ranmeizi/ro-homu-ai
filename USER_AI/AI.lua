@@ -1,8 +1,11 @@
+-- 挂全局
+_G.json = require('AI_sakray/USER_AI/libs/dkjson')
+_G.Array = require('AI_sakray/USER_AI/libs/ArrayLike')
+
 require 'AI_sakray.USER_AI.Const'
 require 'AI_sakray.USER_AI.Util'
 require 'AI_sakray.USER_AI.Memory'
-
-local BehaviorTree = require 'AI_sakray.USER_AI.BehaviorTree.Core.BehaviorTree'
+require ('AI_sakray/USER_AI/BehaviorTree/Core/init')
 
 local TestingBT = require 'AI_sakray.USER_AI.HOMU.Testing_behavior'
 
@@ -20,7 +23,7 @@ Blackboard = {
     attack_id = nil, -- 攻击目标
 
     -- 客户端发送命令列表
-    cmds = List.new(),
+    cmds = Array:new(),
 
     --[[
         任务记录
