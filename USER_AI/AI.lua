@@ -5,7 +5,7 @@ _G.Array = require('AI_sakray/USER_AI/libs/ArrayLike')
 require 'AI_sakray.USER_AI.Const'
 require 'AI_sakray.USER_AI.Util'
 require 'AI_sakray.USER_AI.Memory'
-require ('AI_sakray/USER_AI/BehaviorTree/Core/init')
+require('AI_sakray/USER_AI/BehaviorTree/Core/init')
 
 local TestingBT = require 'AI_sakray.USER_AI.HOMU.Testing_behavior'
 
@@ -14,7 +14,9 @@ Memory.load()
 
 -- 全局黑板
 Blackboard = {
-    id = nil,        -- 生命体id
+    id = nil, -- 生命体id
+
+    owner_id = nil,
 
     memory = Memory, -- 需要持久化的数据
 
@@ -37,16 +39,42 @@ Blackboard = {
     -- 任务队列
     task_queue = List.new(),
 
-    -- 调用 Environment 记录 objects
+    -- 调用 Environment 记录 objects , 后面可以用外置应用读出来
     objects = {
-        -- 生命值
-        hp = nil,
-        -- 最大生命值
-        hp_max = nil,
-        -- 魔法值
-        sp = nil,
-        -- 最大魔法值
-        sp_max = nil,
+        -- 生命体
+        homu = {
+            -- 生命值
+            hp = nil,
+            -- 最大生命值
+            hp_max = nil,
+            -- 魔法值
+            sp = nil,
+            -- 最大魔法值
+            sp_max = nil,
+            -- 类型(编号)
+            type = nil,
+            -- 位置
+            pos = { x = nil, y = nil },
+            -- 攻击距离
+            attack_range = 0
+        },
+        -- 主人
+        owner = {
+            -- 生命值
+            hp = nil,
+            -- 最大生命值
+            hp_max = nil,
+            -- 魔法值
+            sp = nil,
+            -- 最大魔法值
+            sp_max = nil,
+            -- 类型(编号)
+            type = nil,
+            -- 位置
+            pos = { x = nil, y = nil },
+            -- 攻击距离
+            attack_range = 0
+        },
 
         -- 怪物列表
         monsters = {},
@@ -62,6 +90,7 @@ local function loop(id)
     TraceAI('AI loop start')
     -- 记录id
     Blackboard.id = id
+    Blackboard.owner_id = GetV(V_OWNER, id)
 
     Memory.tick = GetTick()
 
