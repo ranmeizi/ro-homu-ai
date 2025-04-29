@@ -35,4 +35,18 @@ function TaskNode:execute()
     return status
 end
 
+--- 高阶函数 withTask
+--- @generic T : table
+--- @param task T 任务对象，必须是一个表
+--- @param func fun(task: T): NodeStates 子函数，接收任务对象并返回节点状态
+--- @return fun(): NodeStates 返回一个包装后的函数
+local function withTask(func)
+    return function()
+        local task = Blackboard.task
+        return func(task)
+    end
+end
+
+TaskNode.withTask = withTask
+
 return TaskNode

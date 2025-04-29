@@ -7,11 +7,7 @@ local MoveTo = require('AI_sakray/USER_AI/BehaviorTree/common/actions/MoveTo')
 
 return Task:new(
     ActionNode:new(function()
-        ---@class MoveToTask
-        ---@field name 'MoveTo'
-        ---@field pos_x number|nil  要么给 xy 要么给 target_id
-        ---@field pos_y number|nil
-        ---@field target_id number|nil
+        ---@type MoveToTask
         local task = Blackboard.task
 
         return MoveTo({

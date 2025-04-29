@@ -26,7 +26,7 @@ function Environment()
     Blackboard.objects.monsters = {} -- 刷新
 
     for index, value in ipairs(actors) do
-        if IsMonster(value) then
+        if IsMonster(value) == 1 then
             Blackboard.objects.monsters[value] = {}
             updateTargetInfoOnTable(Blackboard.objects.monsters[value], value)
             -- 是敌人的话多检测一下 target
