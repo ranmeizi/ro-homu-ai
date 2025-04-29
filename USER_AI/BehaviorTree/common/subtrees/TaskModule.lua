@@ -1,8 +1,10 @@
 local Farm = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Farm'
 local MoveTo = require 'AI_sakray.USER_AI.BehaviorTree.common.task.MoveTo'
+local Kill = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Kill'
 
 local handlers = {
-    MoveTo = MoveTo
+    MoveTo = MoveTo,
+    Kill = Kill
 }
 
 local TaskModule = {
@@ -15,15 +17,16 @@ function TaskModule.execute()
 
     -- 检查任务
     if Blackboard.task == nil then
-        TraceAI('TaskModule Failure')
+        TraceAI('TaskModule Failure,reason no task')
         return NodeStates.FAILURE
     end
 
+    TraceAI('seeeeeee'..Blackboard.task.name)
     -- 检查handler
     local handler = handlers[Blackboard.task.name]
 
     if handler == nil then
-        TraceAI('TaskModule Failure')
+        TraceAI('TaskModule Failure,reason no handler')
         return NodeStates.FAILURE
     end
 

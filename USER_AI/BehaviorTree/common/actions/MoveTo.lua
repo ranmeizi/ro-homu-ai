@@ -31,7 +31,7 @@ function MoveTo(options)
     -- 移动
     Move(Blackboard.id, x, y)
 
-    return NodeStates.RUNNING
+    return NodeStates.SUCCESS
 end
 
 return MoveTo

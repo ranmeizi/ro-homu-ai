@@ -4,11 +4,10 @@
     local msg = GetMsg(Blackboard.id)
 
     -- res 可能是 command 客户端判断会失败
-    -- local rmsg = GetResMsg(Blackboard.id)
-    -- TraceAI('ResCommand: '.. json.encode(msg))
-
-
-    GetResMsg(Blackboard.id)
+    local rmsg = GetResMsg(Blackboard.id)
+    TraceAI('Command: '.. json.encode(msg))
+    TraceAI('ResCommand: '.. json.encode(rmsg))
+    -- GetResMsg(Blackboard.id)
     if msg ~= nil and msg[1] ~= NOME_CMD then
         TraceAI('有消息'.. json.encode(msg))
         Blackboard.cmds:push(msg)

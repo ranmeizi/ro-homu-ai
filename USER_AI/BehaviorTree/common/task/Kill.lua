@@ -35,7 +35,7 @@ local MoveTo = require 'AI_sakray/USER_AI/BehaviorTree/common/actions/MoveTo'
 --- @param task KillTask
 local function ConditionIsDead(task)
     local target_id = task.target_id
-
+    TraceAI('ConditionIsDead' .. target_id)
     local target = Blackboard.objects.monsters[target_id]
     if target == nil then
         return NodeStates.SUCCESS
@@ -45,7 +45,7 @@ local function ConditionIsDead(task)
         return NodeStates.SUCCESS
     end
 
-    return NodeStates.RUNNING
+    return NodeStates.FAILURE
 end
 
 --- @param task KillTask
@@ -59,24 +59,26 @@ local function ActionMoveTo(task)
 end
 
 local Kill = Task:new(
-    Sequence:new({
-        -- 条件 目标活着?
-        RunningOrNot:new(
+    RunningOrNot:new(
+        Sequence:new({
+             -- 条件 目标活着?
             Inverter:new(
                 ConditionNode:new(
                     Task.withTask(ConditionIsDead)
                 )
+            ),
+            Succeeder:new(
+                Sequence:new({
+                    -- 尝试攻击
+                    Inverter:new(
+                        ActionNode:new(Task.withTask(ActionAttack))
+                    ),
+                    -- 移动到目标
+                    ActionNode:new(Task.withTask(ActionMoveTo))
+                })
             )
-        ),
-        Succeeder:new(
-            Sequence:new({
-                -- 尝试攻击
-                ActionNode:new(Task.withTask(ActionAttack)),
-                -- 移动到目标
-                ActionNode:new(Task.withTask(ActionMoveTo))
-            })
-        )
-    })
+        })
+    )
 )
 
 return Kill

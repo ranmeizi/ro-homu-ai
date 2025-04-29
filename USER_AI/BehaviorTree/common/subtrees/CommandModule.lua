@@ -15,6 +15,20 @@ local function createMoveToTask()
     }
 end
 
+--- 创建 Kill Task
+--- [Kill.lua](${workspaceFolder}/USER_AI/BehaviorTree/common/task/Kill.lua)
+local function createKillTask()
+    TraceAI('createKillTask')
+    -- 消费 cmds
+    local cmd = Blackboard.cmds:shift()
+
+    -- 创建一个 MoveTo Task
+    Blackboard.task = {
+        name = 'Kill',
+        target_id = cmd[2]
+    }
+end
+
 -- 插队
 local function tryJumpTask(createTaskFn)
     return function()
@@ -26,6 +40,7 @@ local function tryJumpTask(createTaskFn)
             List.pushleft(Blackboard.task_queue, currTask)
         end
 
+        TraceAI('tryJumpTask: SSBSBSBSBSBSB ')
         -- 创建任务
         createTaskFn()
 
@@ -41,8 +56,8 @@ local function createCmdCondition(index, type)
             and Blackboard.cmds:get(1)
             or Blackboard.cmds:get(2)
 
-        if cmd ~= nil and cmd[1] == 1 then
-            createMoveToTask()
+        TraceAI('createCmdCondition: '.. json.encode(Blackboard.cmds:get(1)))
+        if cmd ~= nil and cmd[1] == type then
             return NodeStates.SUCCESS
         else
             return NodeStates.FAILURE
@@ -67,7 +82,12 @@ local CommandModule = Sequence:new({
                 -- 插队一个 MoveTo Task
                 ActionNode:new(tryJumpTask(createMoveToTask))
             }),
-
+            Sequence:new({
+                -- 判断第一位是不是 MOVE_CMD
+                ConditionNode:new(createCmdCondition(1, ATTACT_OBJET_CMD)),
+                -- 插队一个 Kill Task
+                ActionNode:new(createKillTask)
+            }),
         })
     )
 })

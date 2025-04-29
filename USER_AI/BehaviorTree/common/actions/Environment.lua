@@ -29,8 +29,9 @@ function Environment()
         if IsMonster(value) == 1 then
             Blackboard.objects.monsters[value] = {}
             updateTargetInfoOnTable(Blackboard.objects.monsters[value], value)
-            -- 是敌人的话多检测一下 target
+            -- 是敌人的话多检测一下 target 计算一下 distance
             Blackboard.objects.monsters[value].target = GetV(V_TARGET, value)
+            Blackboard.objects.monsters[value].distance = GetDistance2(Blackboard.id, value)
         end
     end
 
