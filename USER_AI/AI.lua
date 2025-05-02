@@ -97,12 +97,13 @@ local function loop(id)
     Memory.tick = GetTick()
 
 
-    if Memory.tick % 10 == 0 then
-        TraceAI('env' .. json.encode(Blackboard.objects))
-    end
+    -- if Memory.tick % 10 == 0 then
+    --     TraceAI('env' .. json.encode(Blackboard.objects))
+    -- end
 
     -- 运行行为树
     tree:run()
+
 end
 
 function AI(id)

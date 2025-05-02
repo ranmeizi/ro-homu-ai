@@ -40,7 +40,6 @@ local function tryJumpTask(createTaskFn)
             List.pushleft(Blackboard.task_queue, currTask)
         end
 
-        TraceAI('tryJumpTask: SSBSBSBSBSBSB ')
         -- 创建任务
         createTaskFn()
 
@@ -80,7 +79,7 @@ local CommandModule = Sequence:new({
                 -- 判断第一位是不是 MOVE_CMD
                 ConditionNode:new(createCmdCondition(1, MOVE_CMD)),
                 -- 插队一个 MoveTo Task
-                ActionNode:new(tryJumpTask(createMoveToTask))
+                ActionNode:new(createMoveToTask)
             }),
             Sequence:new({
                 -- 判断第一位是不是 MOVE_CMD

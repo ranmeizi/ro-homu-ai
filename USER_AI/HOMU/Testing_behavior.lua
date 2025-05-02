@@ -4,12 +4,18 @@ local Environment = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.Envir
 
 local TestBehaviorTree = {}
 
+local MOVE_RIGHT = ActionNode:new(function()
+    Move(Blackboard.id, Blackboard.objects.homu.pos.x + 1, Blackboard.objects.homu.pos.y)
+end)
+
 -- 定义行为树结构
 TestBehaviorTree.root = Sequence:new({
     CommandModule,
     ActionNode:new(Environment),
     Inverter:new(TaskModule),
-
+    -- MOVE_RIGHT
 })
+
+
 
 return TestBehaviorTree

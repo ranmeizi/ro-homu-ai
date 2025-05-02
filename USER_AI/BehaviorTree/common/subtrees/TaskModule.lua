@@ -1,10 +1,12 @@
 local Farm = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Farm'
 local MoveTo = require 'AI_sakray.USER_AI.BehaviorTree.common.task.MoveTo'
 local Kill = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Kill'
+local BackToScreen = require('AI_sakray.USER_AI.BehaviorTree.common.task.BackToScreen')
 
 local handlers = {
     MoveTo = MoveTo,
-    Kill = Kill
+    Kill = Kill,
+    BackToScreen = BackToScreen
 }
 
 local TaskModule = {
@@ -21,7 +23,7 @@ function TaskModule.execute()
         return NodeStates.FAILURE
     end
 
-    TraceAI('seeeeeee'..Blackboard.task.name)
+    TraceAI('seeeeeee' .. Blackboard.task.name)
     -- 检查handler
     local handler = handlers[Blackboard.task.name]
 

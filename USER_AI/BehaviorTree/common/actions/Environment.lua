@@ -17,6 +17,27 @@ function Environment()
 
     -- 更新自身信息
     updateTargetInfoOnTable(Blackboard.objects.homu, Blackboard.id)
+    -- 计算生命体与主人距离
+    Blackboard.objects.homu.distance = GetDistance2(Blackboard.id, Blackboard.owner_id)
+
+    -- 如果超过，那么 插队一个回到视野内的Task
+    TraceAI('distance:'..Blackboard.objects.homu.distance)
+
+    if Blackboard.objects.homu.distance > 13 then
+        -- 把当前 task leftpush 到 task_queue
+        local currTask = Blackboard.task
+
+        if currTask ~= nil then
+            Blackboard.task = nil
+            List.pushleft(Blackboard.task_queue, currTask)
+        end
+
+        -- 创建一个 back to screen task
+        Blackboard.task = {
+            name = 'BackToScreen'
+        }
+    end
+
     -- 更新主人信息
     updateTargetInfoOnTable(Blackboard.objects.owner, Blackboard.owner_id)
 

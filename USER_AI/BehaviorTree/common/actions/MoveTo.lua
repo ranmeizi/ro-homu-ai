@@ -6,7 +6,6 @@
 --- MoveTo 移动到 xy 坐标 或 target 位置
 ---@param options MoveToOptions
 function MoveTo(options)
-
     -- 目标
     if options.target_id == nil and (options.pos_x == nil or options.pos_y == nil) then
         return NodeStates.FAILURE -- 拜拜 没法move task 结束
@@ -29,7 +28,9 @@ function MoveTo(options)
     end
 
     -- 移动
-    Move(Blackboard.id, x, y)
+    local moveToRes = Move(Blackboard.id, x, y)
+
+    TraceAI('moveToRes' .. moveToRes)
 
     return NodeStates.SUCCESS
 end
