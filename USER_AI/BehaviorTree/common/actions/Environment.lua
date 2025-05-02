@@ -1,3 +1,6 @@
+--[[
+    除了主人 和 生命体 其他的hpsp 看起来是获取不到
+]]
 local function updateTargetInfoOnTable(table, id)
     table.hp = GetV(V_HP, id)
     table.hp_max = GetV(V_MAXHP, id)

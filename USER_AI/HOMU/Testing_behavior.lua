@@ -1,7 +1,7 @@
 local CommandModule = require 'AI_sakray.USER_AI.BehaviorTree.common.subtrees.CommandModule'
 local TaskModule = require 'AI_sakray.USER_AI.BehaviorTree.common.subtrees.TaskModule'
 local Environment = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.Environment'
-
+local IDLE = require('AI_sakray/USER_AI/BehaviorTree/common/subtrees/IDLE')
 local TestBehaviorTree = {}
 
 local MOVE_RIGHT = ActionNode:new(function()
@@ -13,7 +13,8 @@ TestBehaviorTree.root = Sequence:new({
     CommandModule,
     ActionNode:new(Environment),
     Inverter:new(TaskModule),
-    -- MOVE_RIGHT
+    -- MOVE_RIGHT,
+    IDLE
 })
 
 

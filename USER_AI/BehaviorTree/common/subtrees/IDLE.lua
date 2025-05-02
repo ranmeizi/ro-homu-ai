@@ -1,23 +1,17 @@
-local IDEL = Sequence:new({
-    -- 获取消息
-    ResCommand,
-    -- 判断
-    Succeeder:new(
-        Selector:new({
-            Sequence:new({
-                -- 判断第一位是不是 FOLLOW_CMD,如果是，进入后续 x tick 的第二 cmd 的判断
-                ConditionNode:new(createCmdCondition(1, FOLLOW_CMD)),
-                -- Timeout节点
-            }),
-            Sequence:new({
-                -- 判断第一位是不是 MOVE_CMD
-                ConditionNode:new(createCmdCondition(1, MOVE_CMD)),
-                -- 插队一个 MoveTo Task
-                ActionNode:new(tryJumpTask(createMoveToTask))
-            }),
+--[[
+    一直保持在主人身边，随便走走
 
-        })
-    )
+    a - 静止模式
+    b - 反击
+    c - 拉怪保护主人
+    d - 没事干 整活
+        d1 - 随机绕一圈模式 (创建一个绕一圈task)
+        d2 - 休闲模式 随便走走 (随便走 task 间隔 4000ms)
+        d3 - 惊吓模式 快速乱走 (最边走 task 间隔 0ms)
+        d4 - 画爱心
+]]
+local IDLE = Sequence:new({
+
 })
 
-return IDEL
+return IDLE

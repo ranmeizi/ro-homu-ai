@@ -80,8 +80,11 @@ Blackboard = {
 
         -- 怪物列表
         monsters = {},
-        -- 永远到达不了的目标，MoveTo timeout 的目标加进去
-        unreachable = {},
+    },
+
+    -- IDLE 配置
+    idle_state = {
+
     }
 }
 
