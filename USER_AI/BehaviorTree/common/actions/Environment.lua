@@ -2,6 +2,7 @@
     除了主人 和 生命体 其他的hpsp 看起来是获取不到
 ]]
 local function updateTargetInfoOnTable(table, id)
+    table.id = id
     table.hp = GetV(V_HP, id)
     table.hp_max = GetV(V_MAXHP, id)
     table.sp = GetV(V_SP, id)
@@ -24,21 +25,23 @@ function Environment()
     Blackboard.objects.homu.distance = GetDistance2(Blackboard.id, Blackboard.owner_id)
 
     -- 如果超过，那么 插队一个回到视野内的Task
-    TraceAI('distance:'..Blackboard.objects.homu.distance)
+    TraceAI('distance:' .. Blackboard.objects.homu.distance)
 
     if Blackboard.objects.homu.distance > 13 then
-        -- 把当前 task leftpush 到 task_queue
-        local currTask = Blackboard.task
+        if not (Blackboard.task and Blackboard.task.name == 'BackToScreen') then
+            -- 把当前 task leftpush 到 task_queue
+            local currTask = Blackboard.task
 
-        if currTask ~= nil then
-            Blackboard.task = nil
-            List.pushleft(Blackboard.task_queue, currTask)
+            if currTask ~= nil then
+                Blackboard.task = nil
+                List.pushleft(Blackboard.task_queue, currTask)
+            end
+
+            -- 创建一个 back to screen task
+            Blackboard.task = {
+                name = 'BackToScreen'
+            }
         end
-
-        -- 创建一个 back to screen task
-        Blackboard.task = {
-            name = 'BackToScreen'
-        }
     end
 
     -- 更新主人信息

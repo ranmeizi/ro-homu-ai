@@ -364,3 +364,36 @@ function Hyper_follow(creep)
 
 	return OK
 end
+
+-- 插队
+---comment
+---@param createTaskFn function
+---@param options TryJumpTaskOptions | nil
+---@return function
+function TryJumpTask(createTaskFn, options)
+
+	options = options or {
+		checkUniqueTask = nil
+	}
+
+	-- if options.checkUniqueTaskName ~= nil then
+	-- 	for key, value in List. do
+			
+	-- 	end
+	-- end
+
+	return function()
+		-- 把当前 task leftpush 到 task_queue
+		local currTask = Blackboard.task
+
+		if currTask ~= nil then
+			Blackboard.task = nil
+			List.pushleft(Blackboard.task_queue, currTask)
+		end
+
+		-- 创建任务
+		createTaskFn()
+
+		return NodeStates.SUCCESS
+	end
+end

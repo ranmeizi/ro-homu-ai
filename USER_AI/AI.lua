@@ -45,6 +45,7 @@ Blackboard = {
     objects = {
         -- 生命体
         homu = {
+            id = nil,
             -- 生命值
             hp = nil,
             -- 最大生命值
@@ -62,6 +63,7 @@ Blackboard = {
         },
         -- 主人
         owner = {
+            id = nil,
             -- 生命值
             hp = nil,
             -- 最大生命值
@@ -80,6 +82,9 @@ Blackboard = {
 
         -- 怪物列表
         monsters = {},
+
+        -- 记录 find taeget 的结果
+        bestTarget = nil
     },
 
     -- IDLE 配置

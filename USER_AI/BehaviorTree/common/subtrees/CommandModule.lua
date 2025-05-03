@@ -6,7 +6,6 @@ local function createMoveToTask()
     -- 消费 cmds
     local cmd = Blackboard.cmds:shift()
 
-
     -- 创建一个 MoveTo Task
     Blackboard.task = {
         name = 'MoveTo',
@@ -18,7 +17,6 @@ end
 --- 创建 Kill Task
 --- [Kill.lua](${workspaceFolder}/USER_AI/BehaviorTree/common/task/Kill.lua)
 local function createKillTask()
-    TraceAI('createKillTask')
     -- 消费 cmds
     local cmd = Blackboard.cmds:shift()
 
@@ -27,24 +25,6 @@ local function createKillTask()
         name = 'Kill',
         target_id = cmd[2]
     }
-end
-
--- 插队
-local function tryJumpTask(createTaskFn)
-    return function()
-        -- 把当前 task leftpush 到 task_queue
-        local currTask = Blackboard.task
-
-        if currTask ~= nil then
-            Blackboard.task = nil
-            List.pushleft(Blackboard.task_queue, currTask)
-        end
-
-        -- 创建任务
-        createTaskFn()
-
-        return NodeStates.SUCCESS
-    end
 end
 
 ---@params index number
