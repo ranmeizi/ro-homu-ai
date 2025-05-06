@@ -21,7 +21,7 @@ function TaskNode:execute()
         Blackboard.task = nil
 
         -- 从任务队列中取下一个任务
-        local nextTask = List.popleft(Blackboard.task_queue)
+        local nextTask = Blackboard.task_queue:shift()
         if nextTask then
             Blackboard.task = nextTask
             TraceAI("TaskNode: 从任务队列中取出新任务: " .. tostring(nextTask.name))

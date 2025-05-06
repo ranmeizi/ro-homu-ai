@@ -35,7 +35,6 @@ local function createCmdCondition(index, type)
             and Blackboard.cmds:get(1)
             or Blackboard.cmds:get(2)
 
-        TraceAI('createCmdCondition: '.. json.encode(Blackboard.cmds:get(1)))
         if cmd ~= nil and cmd[1] == type then
             return NodeStates.SUCCESS
         else

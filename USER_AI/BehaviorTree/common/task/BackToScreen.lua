@@ -4,7 +4,7 @@ return Task:new(
             Sequence:new({
                 --  判断是否是视野外
                 ConditionNode:new(function()
-                    return Blackboard.objects.homu.distance > 13
+                    return Blackboard.objects.homu.distance > SCREEN_MAX_DISTANCE
                         and NodeStates.SUCCESS
                         or NodeStates.FAILURE
                 end),
@@ -22,6 +22,7 @@ return Task:new(
                     local dx = x1 - x2
                     local dy = y1 - y2
 
+                    -- 走2步？
                     local movementX = dx > 0 and -1 or 1
                     local movementY = dy > 0 and -1 or 1
 
@@ -33,7 +34,23 @@ return Task:new(
                         movementY = 0
                     end
 
-                    Move(Blackboard.id, x1 + movementX, y1 + movementY)
+                    -- 走两步得了，push 一个 Stop task
+                    MoveToOwner(Blackboard.id)
+
+                    --Move(Blackboard.id, x1 + movementX, y1 + movementY)
+
+                    -- local currTask = Blackboard.task
+
+                    -- if currTask ~= nil then
+                    --     Blackboard.task = nil
+                    --     Blackboard.task_queue:unshift(currTask)
+                    -- end
+
+                    -- Blackboard.task = {
+                    --     name = 'Stop',
+                    --     startTime = GetTick()
+                    -- }
+
                     return NodeStates.FAILURE
                 end)
             })

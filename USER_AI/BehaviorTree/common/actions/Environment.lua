@@ -25,16 +25,15 @@ function Environment()
     Blackboard.objects.homu.distance = GetDistance2(Blackboard.id, Blackboard.owner_id)
 
     -- 如果超过，那么 插队一个回到视野内的Task
-    TraceAI('distance:' .. Blackboard.objects.homu.distance)
 
-    if Blackboard.objects.homu.distance > 13 then
+    if Blackboard.objects.homu.distance > SCREEN_MAX_DISTANCE then
         if not (Blackboard.task and Blackboard.task.name == 'BackToScreen') then
             -- 把当前 task leftpush 到 task_queue
             local currTask = Blackboard.task
 
             if currTask ~= nil then
                 Blackboard.task = nil
-                List.pushleft(Blackboard.task_queue, currTask)
+                Blackboard.task_queue:unshift(currTask)
             end
 
             -- 创建一个 back to screen task

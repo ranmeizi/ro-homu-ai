@@ -1,4 +1,4 @@
-local json = require('AI_sakray.USER_AI.libs.dkjson')
+-- local json = require('AI_sakray.USER_AI.libs.dkjson')
 --------------------------------------------
 -- List utility
 --------------------------------------------
@@ -388,7 +388,7 @@ function TryJumpTask(createTaskFn, options)
 
 		if currTask ~= nil then
 			Blackboard.task = nil
-			List.pushleft(Blackboard.task_queue, currTask)
+			Blackboard.task_queue:unshift(currTask)
 		end
 
 		-- 创建任务

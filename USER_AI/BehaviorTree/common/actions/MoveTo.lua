@@ -28,9 +28,8 @@ function MoveTo(options)
     end
 
     -- 移动
-    local moveToRes = Move(Blackboard.id, x, y)
+    Move(Blackboard.id, x, y)
 
-    TraceAI('moveToRes' .. moveToRes)
 
     return NodeStates.SUCCESS
 end

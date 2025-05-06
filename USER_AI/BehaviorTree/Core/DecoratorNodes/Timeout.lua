@@ -2,11 +2,11 @@ local Node = require("AI_sakray.USER_AI.BehaviorTree.Core.Node")
 local Timeout = setmetatable({}, { __index = Node })
 Timeout.__index = Timeout
 
-function Timeout:new(child, duration)
+function Timeout:new(child, duration, startTime)
     local node = Node.new(self)
     node.child = child
     node.duration = duration
-    node.startTime = nil
+    node.startTime = startTime
     return node
 end
 
