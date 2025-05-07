@@ -95,12 +95,9 @@ Blackboard = {
     }
 }
 
-TraceAI('object')
-
 -- 初始化行为树
 local tree = BehaviorTree:new(TestingBT.root)
 
-TraceAI('tree')
 
 local function loop(id)
     -- TraceAI('AI loop start')
@@ -109,8 +106,6 @@ local function loop(id)
     Blackboard.owner_id = GetV(V_OWNER, id)
 
     Memory.tick = GetTick()
-
-    TraceAI('tick:'..Memory.tick)
 
     -- if Memory.tick % 10 == 0 then
     --     TraceAI('env' .. json.encode(Blackboard.objects))

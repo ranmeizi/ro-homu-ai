@@ -7,17 +7,23 @@
 
 return Task:new(
     RunningOrNot:new(
-        Sequence:new({
-            -- 判断在屏幕内吗？
-            ConditionNode:new(function()
-                TraceAI('Stop ConditionNode')
-                if Blackboard.objects.homu.distance < SCREEN_MAX_DISTANCE then
+        Inverter:new(
+            Sequence:new({
+                -- 判断在屏幕内吗？
+                ConditionNode:new(function()
+                    TraceAI('Stop ConditionNode')
+                    if Blackboard.objects.homu.distance < SCREEN_MAX_DISTANCE then
+                        return NodeStates.SUCCESS
+                    else
+                        return NodeStates.FAILURE
+                    end
+                end),
+                ActionNode:new(function()
+                    TraceAI('ZAI FAN WEI NEI LE')
                     Move(Blackboard.id, Blackboard.objects.homu.pos.x, Blackboard.objects.homu.pos.y)
                     return NodeStates.SUCCESS
-                else
-                    return NodeStates.FAILURE
-                end
-            end)
-        })
+                end)
+            })
+        )
     )
 )

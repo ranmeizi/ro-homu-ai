@@ -17,7 +17,7 @@ local function updateTargetInfoOnTable(table, id)
 end
 
 function Environment()
-    TraceAI('Action Environment')
+    -- TraceAI('Action Environment')
 
     -- 更新自身信息
     updateTargetInfoOnTable(Blackboard.objects.homu, Blackboard.id)
@@ -25,10 +25,27 @@ function Environment()
     Blackboard.objects.homu.distance = GetDistance2(Blackboard.id, Blackboard.owner_id)
 
     -- 如果超过，那么 插队一个回到视野内的Task
+    TraceAI('distance:'..Blackboard.objects.homu.distance)
 
-    if Blackboard.objects.homu.distance > SCREEN_MAX_DISTANCE then
+    if Blackboard.objects.homu.distance >= SCREEN_MAX_DISTANCE then
         if not (Blackboard.task and Blackboard.task.name == 'BackToScreen') then
             -- 把当前 task leftpush 到 task_queue
+            -- local currTask = Blackboard.task
+
+            -- if currTask ~= nil then
+            --     Blackboard.task = nil
+            --     Blackboard.task_queue:unshift(currTask)
+            -- end
+
+            -- 创建一个 back to screen task
+            -- Blackboard.task = {
+            --     name = 'BackToScreen'
+            -- }
+            -- 走两步得了，push 一个 Stop task
+            MoveToOwner(Blackboard.id)
+
+            --Move(Blackboard.id, x1 + movementX, y1 + movementY)
+
             local currTask = Blackboard.task
 
             if currTask ~= nil then
@@ -36,9 +53,8 @@ function Environment()
                 Blackboard.task_queue:unshift(currTask)
             end
 
-            -- 创建一个 back to screen task
             Blackboard.task = {
-                name = 'BackToScreen'
+                name = 'Stop',
             }
         end
     end
