@@ -1,5 +1,4 @@
-require "AI\\Const"
-
+-- local json = require('AI_sakray.USER_AI.libs.dkjson')
 --------------------------------------------
 -- List utility
 --------------------------------------------
@@ -65,6 +64,50 @@ function List.size(list)
 	local size = list.last - list.first + 1
 	return size
 end
+
+------------------------------------
+---Array
+------------------------------------
+
+ArrayLike = {}
+
+function ArrayLike:new(table)
+	local arr = {
+		length = 0
+	}
+	if table ~= nil then
+		for index, value in ipairs(table) do
+			arr[index] = value
+			arr.length = arr.length + 1
+		end
+	end
+	return setmetatable(arr, {
+		__index = ArrayLike,
+		__tojson = function(t)
+			local cleaned = {}
+			for k, v in pairs(t) do
+				if type(v) == "function" then
+					-- cleaned[k] = v.toString()
+				else
+					if k == 'length' then
+						print()
+					else
+						cleaned[k] = v
+					end
+				end
+				return json.encode(cleaned)
+			end
+		end
+	})
+end
+
+function ArrayLike:push(item)
+	local pushIndex = self.length + 1
+	self[pushIndex] = item
+	self.length = pushIndex + 1
+end
+
+------------------------------------
 
 -------------------------------------------------
 ---util
@@ -320,4 +363,37 @@ function Hyper_follow(creep)
 	move_to_next(creep)
 
 	return OK
+end
+
+-- 插队
+---comment
+---@param createTaskFn function
+---@param options TryJumpTaskOptions | nil
+---@return function
+function TryJumpTask(createTaskFn, options)
+
+	options = options or {
+		checkUniqueTask = nil
+	}
+
+	-- if options.checkUniqueTaskName ~= nil then
+	-- 	for key, value in List. do
+			
+	-- 	end
+	-- end
+
+	return function()
+		-- 把当前 task leftpush 到 task_queue
+		local currTask = Blackboard.task
+
+		if currTask ~= nil then
+			Blackboard.task = nil
+			Blackboard.task_queue:unshift(currTask)
+		end
+
+		-- 创建任务
+		createTaskFn()
+
+		return NodeStates.SUCCESS
+	end
 end
