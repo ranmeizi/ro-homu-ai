@@ -12,19 +12,12 @@ return Task:new(
             ConditionNode:new(function()
                 TraceAI('Stop ConditionNode')
                 if Blackboard.objects.homu.distance < SCREEN_MAX_DISTANCE then
+                    Move(Blackboard.id, Blackboard.objects.homu.pos.x, Blackboard.objects.homu.pos.y)
                     return NodeStates.SUCCESS
                 else
                     return NodeStates.FAILURE
                 end
-            end),
-            -- 延迟停止
-            Timeout:new(
-                ActionNode:new(function()
-                    TraceAI('Stop timeout')
-                    Move(Blackboard.id, Blackboard.objects.homu.pos.x, Blackboard.objects.homu.pos.y)
-                end),
-                1000
-            )
+            end)
         })
     )
 )
