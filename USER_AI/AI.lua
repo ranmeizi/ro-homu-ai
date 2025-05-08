@@ -89,6 +89,9 @@ Blackboard = {
         bestTarget = nil
     },
 
+    -- 当生命体离开屏幕太远，给他拉回来 
+
+
     -- IDLE 配置
     idle_state = {
 

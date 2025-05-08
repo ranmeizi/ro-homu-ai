@@ -50,7 +50,6 @@ end
 
 function ArrayLike:ipairs()
 	local index = 0
-	print('kankan',self._length,self._head_index)
 	-- iterator -> index, value
 	return function()
 		index = index + 1
@@ -112,6 +111,22 @@ function ArrayLike:shift()
 	self._length = self._length - 1
 	self[self._head_index] = nil
 	return value
+end
+
+function ArrayLike:filter(predicate)
+    assert(type(predicate) == "function", "filter 需要一个函数作为参数")
+    
+    -- 创建一个新的 ArrayLike 实例
+    local filtered = ArrayLike.new({})
+    
+    -- 遍历当前 ArrayLike 的所有元素
+    for index, value in self:ipairs() do
+        if predicate(value, index) then
+            filtered:push(value) -- 如果满足条件，加入新的 ArrayLike
+        end
+    end
+    
+    return filtered
 end
 
 

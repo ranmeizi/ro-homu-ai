@@ -261,33 +261,25 @@ end
 
 -- 插队
 ---comment
----@param createTaskFn function
+---@param task MoveToTask | KillTask | StopTask
 ---@param options TryJumpTaskOptions | nil
----@return function
-function TryJumpTask(createTaskFn, options)
+function TryJumpTask(task, options)
+	local removeUniqueTask = options == nil and nil or options.removeUniqueTask
 
-	options = options or {
-		checkUniqueTask = nil
-	}
-
-	-- if options.checkUniqueTaskName ~= nil then
-	-- 	for key, value in List. do
-			
-	-- 	end
-	-- end
-
-	return function()
-		-- 把当前 task leftpush 到 task_queue
-		local currTask = Blackboard.task
-
-		if currTask ~= nil then
-			Blackboard.task = nil
-			Blackboard.task_queue:unshift(currTask)
-		end
-
-		-- 创建任务
-		createTaskFn()
-
-		return NodeStates.SUCCESS
+	if removeUniqueTask == true then
+		-- 删除 queue 里 名为 task.name 的任务
+		Blackboard.task_queue:filter(function(item)
+			return item.name ~= task.name
+		end)
 	end
+
+	local currTask = Blackboard.task
+	if currTask ~= nil then
+		Blackboard.task = nil
+		Blackboard.task_queue:unshift(currTask)
+	end
+
+	Blackboard.task = task
+
+	return OK
 end
