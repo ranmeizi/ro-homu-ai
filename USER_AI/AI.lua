@@ -114,6 +114,8 @@ local function loop(id)
     --     TraceAI('env' .. json.encode(Blackboard.objects))
     -- end
 
+    TraceAI('QUQUE LEN:'..Blackboard.task_queue:len())
+
     -- 运行行为树
     tree:run()
 

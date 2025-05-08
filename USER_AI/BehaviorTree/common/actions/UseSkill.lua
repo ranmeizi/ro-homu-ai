@@ -1,6 +1,6 @@
---- SkillAttack 对敌人技能攻击
+--- UseSkill 对敌人技能攻击
 ---@param target_id number
-function SkillAttack(level, type, target_id)
+function UseSkill(level, type, target_id)
     -- 判断攻击距离
     local attack_range = GetV(V_SKILLATTACKRANGE, Blackboard.id, type)
 
@@ -18,4 +18,4 @@ function SkillAttack(level, type, target_id)
     return NodeStates.SUCCESS
 end
 
-return SkillAttack
+return UseSkill

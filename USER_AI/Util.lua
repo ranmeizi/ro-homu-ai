@@ -264,19 +264,20 @@ end
 ---@param task MoveToTask | KillTask | StopTask
 ---@param options TryJumpTaskOptions | nil
 function TryJumpTask(task, options)
-	local removeUniqueTask = options == nil and nil or options.removeUniqueTask
-
-	if removeUniqueTask == true then
-		-- 删除 queue 里 名为 task.name 的任务
-		Blackboard.task_queue:filter(function(item)
-			return item.name ~= task.name
-		end)
-	end
-
+	-- 保存当前任务
 	local currTask = Blackboard.task
 	if currTask ~= nil then
 		Blackboard.task = nil
 		Blackboard.task_queue:unshift(currTask)
+	end
+
+	local removeUniqueTask = options == nil and nil or options.removeUniqueTask
+
+	if removeUniqueTask == true then
+		-- 删除 queue 里 名为 task.name 的任务
+		Blackboard.task_queue = Blackboard.task_queue:filter(function(item)
+			return item.name ~= task.name
+		end)
 	end
 
 	Blackboard.task = task

@@ -1,4 +1,5 @@
 local ResCommand = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.ResCommand'
+local UseSkill = require('AI_sakray/USER_AI/BehaviorTree/common/actions/UseSkill')
 
 --- 创建 MoveTo Task
 --- [MoveTo.lua](${workspaceFolder}/USER_AI/BehaviorTree/common/task/MoveTo.lua)
@@ -61,10 +62,21 @@ local CommandModule = Sequence:new({
                 ActionNode:new(createMoveToTask)
             }),
             Sequence:new({
-                -- 判断第一位是不是 MOVE_CMD
+                -- 判断第一位是不是 ATTACT_OBJET_CMD
                 ConditionNode:new(createCmdCondition(1, ATTACT_OBJET_CMD)),
                 -- 插队一个 Kill Task
                 ActionNode:new(createKillTask)
+            }),
+            Sequence:new({
+                -- 判断第一位是不是 MOVE_CMD
+                ConditionNode:new(createCmdCondition(1, SKILL_OBJECT_CMD)),
+                -- 放技能
+                ActionNode:new(function()
+                    -- 消费 cmds
+                    local cmd = Blackboard.cmds:shift()
+
+                    UseSkill(cmd[2], cmd[3], cmd[4])
+                end)
             }),
         })
     )

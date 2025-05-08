@@ -12,7 +12,7 @@ return Task:new(
                 -- 判断在屏幕内吗？
                 ConditionNode:new(function()
                     TraceAI('Stop ConditionNode')
-                    if Blackboard.objects.homu.distance < SCREEN_MAX_DISTANCE then
+                    if Blackboard.objects.homu.distance < SCREEN_MAX_DISTANCE - 1 then
                         return NodeStates.SUCCESS
                     else
                         return NodeStates.FAILURE
