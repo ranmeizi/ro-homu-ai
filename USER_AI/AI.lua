@@ -31,6 +31,9 @@ Blackboard = {
     -- 客户端发送命令列表
     cmds = Array:new({}),
 
+    -- 计时器 table
+    timers = {},
+
     --[[
         任务记录
         {
@@ -79,23 +82,23 @@ Blackboard = {
             -- 位置
             pos = { x = nil, y = nil },
             -- 攻击距离
-            attack_range = 0
+            attack_range = 0,
+            -- 目标
+            target = nil
         },
 
         -- 怪物列表
         monsters = {},
 
+        -- 生命体 仇恨列表
+        hateListHomu = Array:new({}),
+
+        -- 主人 仇恨列表
+        hateListOwner = Array:new({}),
+
         -- 记录 find taeget 的结果
         bestTarget = nil
     },
-
-    -- 当生命体离开屏幕太远，给他拉回来 
-
-
-    -- IDLE 配置
-    idle_state = {
-
-    }
 }
 
 -- 初始化行为树
@@ -114,11 +117,10 @@ local function loop(id)
     --     TraceAI('env' .. json.encode(Blackboard.objects))
     -- end
 
-    TraceAI('QUQUE LEN:'..Blackboard.task_queue:len())
+    TraceAI('QUQUE LEN:' .. Blackboard.task_queue:len())
 
     -- 运行行为树
     tree:run()
-
 end
 
 function AI(id)

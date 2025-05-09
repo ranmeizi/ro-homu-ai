@@ -1,14 +1,13 @@
 local Farm = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Farm'
 local MoveTo = require 'AI_sakray.USER_AI.BehaviorTree.common.task.MoveTo'
 local Kill = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Kill'
-local BackToScreen = require('AI_sakray.USER_AI.BehaviorTree.common.task.BackToScreen')
 local Stop = require('AI_sakray/USER_AI/BehaviorTree/common/task/Stop')
 
 local handlers = {
     MoveTo = MoveTo,
     Kill = Kill,
-    BackToScreen = BackToScreen,
-    Stop = Stop
+    Stop = Stop,
+    Farm = Farm
 }
 
 local TaskModule = {

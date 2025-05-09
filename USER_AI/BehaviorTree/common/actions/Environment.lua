@@ -14,6 +14,7 @@ local function updateTargetInfoOnTable(table, id)
     table.type = GetV(V_HOMUNTYPE, id)
     table.attack_range = GetV(V_ATTACKRANGE, id)
     table.motion = GetV(V_MOTION, id)
+    table.target = GetV(V_TARGET, id)
 end
 
 function Environment()
@@ -37,8 +38,24 @@ function Environment()
             Blackboard.objects.monsters[value] = {}
             updateTargetInfoOnTable(Blackboard.objects.monsters[value], value)
             -- 是敌人的话多检测一下 target 计算一下 distance
-            Blackboard.objects.monsters[value].target = GetV(V_TARGET, value)
             Blackboard.objects.monsters[value].distance = GetDistance2(Blackboard.id, value)
+        end
+    end
+
+    -- 清空仇恨列表
+    Blackboard.objects.hateListHomu:clear()
+    Blackboard.objects.hateListOwner:clear()
+
+    -- 从 monster 列表里统计一下 仇恨列表
+    for index, value in ipairs(Blackboard.objects.monsters) do
+        local item = {
+            id = value.id,
+            distance = value.distance
+        }
+        if value.target == Blackboard.id then
+            Blackboard.objects.hateListHomu:push(item)
+        elseif value.target == Blackboard.owner_id then
+            Blackboard.objects.hateListOwner:push(item)
         end
     end
 

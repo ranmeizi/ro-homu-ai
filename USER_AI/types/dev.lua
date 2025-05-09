@@ -12,5 +12,12 @@
 ---@class StopTask 保持在屏幕里
 ---@field name 'Stop'
 
+---@class FarmTask 练级
+---@field name 'Farm'
+
 ---@class TryJumpTaskOptions
 ---@field removeUniqueTask boolean 默认nil 开启删除队列里这个name的task
+
+---@class AbstractTimer 计时器
+---@field startTime number 开始时间
+---@field timeout number   延迟时间

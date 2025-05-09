@@ -78,3 +78,8 @@ function IsMonster(id)
   print(id)
   return ''
 end
+
+---获取主人的目标？
+function GetOwnerEnemy()
+  
+end

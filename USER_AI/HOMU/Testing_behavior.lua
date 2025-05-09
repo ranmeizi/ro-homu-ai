@@ -12,8 +12,7 @@ end)
 TestBehaviorTree.root = Sequence:new({
     CommandModule,
     EnvironmentModule,
-    -- ActionNode:new(Environment),
-    Inverter:new(TaskModule),
+    Inverter:new(TaskModule), -- 取反，因为 Task 执行成功，意味着没事可做了
     -- MOVE_RIGHT,
     IDLE
 })

@@ -1,4 +1,4 @@
-local FindBestTarget = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.FindBestTarget'
+local FindTarget = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.FindTarget'
 
 --[[
     Farm
@@ -19,20 +19,31 @@ local FindBestTarget = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.Fi
 ]]
 local Farm = Sequence:new({
     -- 寻敌
-    ActionNode:new(FindBestTarget),
+    ActionNode:new(function()
+        -- 重置
+        Blackboard.objects.bestTarget = nil
+
+        local res = FindTarget.madDogFindTarget()
+
+        Blackboard.objects.bestTarget = res
+
+        return res ~= nil and NodeStates.SUCCESS or NodeStates.FAILURE
+
+    end),
     -- 发布Kill任务
     ActionNode:new(function()
         -- 还是校验一下保险
         if Blackboard.objects.bestTarget ~= nil then
-            Blackboard.task = {
+            -- 插队一个 Kill
+            local task = {
                 name = 'Kill',
                 target_id = Blackboard.objects.bestTarget.id
             }
 
-            Blackboard.objects.bestTarget = nil
+            TryJumpTask(task)
         end
 
-        return NodeStates.SUCCESS
+        return NodeStates.FAILURE
     end)
 })
 

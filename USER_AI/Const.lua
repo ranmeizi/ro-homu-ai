@@ -112,11 +112,6 @@ MH_PAIN_KILLER = 8021
 --------------------------
 ---res code
 --------------------------
-OK = 0
-ERR_NOT_FOUND = -5
-ERR_INVALID_TARGET = -7
-ERR_NOT_IN_RANGE = -9
-ERR_UNKNOWN = -99
 
 NodeStates = {
     SUCCESS = 1, -- 节点 成功
@@ -134,20 +129,8 @@ NodeStates = {
 
 SCREEN_MAX_DISTANCE = 14 -- 超过多少给生命体拉回来
 
-FOLLOW_STICKY = 3000
-
-States = {
-    FOLLOW = 'follow',
-    BATTLE = 'battle',
-    BACK = 'back',
-}
---------------------------
+IDLE_FOLLOW_DISTANCE = 3 -- 空闲跟随距离
 
 --------------------------
---- hyper follow status
---------------------------
-HF_TOP_LEFT = 1
-HF_TOP_RIGHT = 2
-HF_BOTTOM_RIGHT = 3
-HF_BOTTOM_LEFT = 4
---------------------------
+
+

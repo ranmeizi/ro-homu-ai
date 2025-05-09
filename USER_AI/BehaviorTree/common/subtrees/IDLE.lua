@@ -11,7 +11,9 @@
         d4 - 画爱心
 ]]
 local IDLE = Sequence:new({
+    -- 有 target 就去攻击
 
+    -- 离开
 })
 
 return IDLE
