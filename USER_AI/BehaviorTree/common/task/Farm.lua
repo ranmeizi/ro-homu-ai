@@ -27,21 +27,22 @@ local Farm = Sequence:new({
 
         Blackboard.objects.bestTarget = res
 
-        return res ~= nil and NodeStates.SUCCESS or NodeStates.FAILURE
-
+        if res == nil then
+            MoveToOwner(Blackboard.id)
+            return NodeStates.FAILURE
+        else
+            return NodeStates.SUCCESS
+        end
     end),
     -- 发布Kill任务
     ActionNode:new(function()
-        -- 还是校验一下保险
-        if Blackboard.objects.bestTarget ~= nil then
-            -- 插队一个 Kill
-            local task = {
-                name = 'Kill',
-                target_id = Blackboard.objects.bestTarget.id
-            }
+         -- 插队一个 Kill
+         local task = {
+            name = 'Kill',
+            target_id = Blackboard.objects.bestTarget
+        }
 
-            TryJumpTask(task)
-        end
+        TryJumpTask(task, {})
 
         return NodeStates.FAILURE
     end)

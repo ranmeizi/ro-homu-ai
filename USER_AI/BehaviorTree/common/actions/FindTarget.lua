@@ -36,7 +36,7 @@ end
 -- 从 monster 里找最优的怪 (由于信息太少，先找最近的)
 local function findBestTargetInMonsters()
     local target = nil
-    for index, monster in ipairs(Blackboard.objects.monsters) do
+    for id, monster in pairs(Blackboard.objects.monsters) do
         if target == nil then
             target = monster
         else
@@ -46,7 +46,7 @@ local function findBestTargetInMonsters()
         end
     end
 
-    return target.id
+    return target and target.id or nil
 end
 
 -- 从 仇恨列表中找最近的怪
@@ -75,9 +75,9 @@ end
 ]]
 local function madDogFindTarget()
     -- 1. 第一目标是主人打的
-    if Blackboard.objects.owner.target ~= nil then
-        return Blackboard.objects.owner.target
-    end
+    -- if Blackboard.objects.owner.target ~= nil then
+    --     return Blackboard.objects.owner.target
+    -- end
 
     -- 2. monster 里找
     return findBestTargetInMonsters()

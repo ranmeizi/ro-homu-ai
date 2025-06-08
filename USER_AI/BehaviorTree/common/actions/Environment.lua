@@ -23,7 +23,7 @@ function Environment()
     -- 更新自身信息
     updateTargetInfoOnTable(Blackboard.objects.homu, Blackboard.id)
     -- 计算生命体与主人距离
-    Blackboard.objects.homu.distance = GetDistance2(Blackboard.id, Blackboard.owner_id)
+    Blackboard.objects.owner.distance = GetDistance2(Blackboard.id, Blackboard.owner_id)
 
     -- 更新主人信息
     updateTargetInfoOnTable(Blackboard.objects.owner, Blackboard.owner_id)

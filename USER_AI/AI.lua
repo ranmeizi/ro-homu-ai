@@ -84,7 +84,8 @@ Blackboard = {
             -- 攻击距离
             attack_range = 0,
             -- 目标
-            target = nil
+            target = nil,
+            distance = nil
         },
 
         -- 怪物列表
@@ -104,9 +105,25 @@ Blackboard = {
 -- 初始化行为树
 local tree = BehaviorTree:new(TestingBT.root)
 
+function showTasks()
+    if Blackboard.task == nil then
+        TraceAI('current task: nil')
+    else
+        TraceAI('current task:' .. Blackboard.task.name)
+    end
+
+
+    local queue = 'task queue:'
+
+    for index, value in Blackboard.task_queue:ipairs() do
+        queue = queue .. value.name .. ','
+    end
+
+    TraceAI(queue)
+end
 
 local function loop(id)
-    -- TraceAI('AI loop start')
+    TraceAI('AI loop start')
     -- 记录id
     Blackboard.id = id
     Blackboard.owner_id = GetV(V_OWNER, id)
@@ -117,7 +134,7 @@ local function loop(id)
     --     TraceAI('env' .. json.encode(Blackboard.objects))
     -- end
 
-    TraceAI('QUQUE LEN:' .. Blackboard.task_queue:len())
+    showTasks()
 
     -- 运行行为树
     tree:run()

@@ -56,9 +56,9 @@ end
 
 --[[
     这里规定，下命令，在主人周围 8 格 代表 8个 options
-    1️⃣2️⃣3️⃣       -1,-1 | 0,-1 | 1,-1
+    1️⃣2️⃣3️⃣       -1,1 | 0,1 | 1,1
     4️⃣👨🏻‍🦳5️⃣       -1,0  |      | 1,0
-    6️⃣7️⃣8️⃣       -1,1  | 0,1  | 1,1
+    6️⃣7️⃣8️⃣       -1,-1  | 0,1  | 1,-1
 ]]
 local function getValidOptions(x, y)
     local ox = Blackboard.objects.owner.pos.x
@@ -66,14 +66,14 @@ local function getValidOptions(x, y)
 
     -- 定义相对坐标与选项编号的映射
     local optionsMap = {
-        ["-1,-1"] = 1, -- 左上
-        ["0,-1"]  = 2, -- 上
-        ["1,-1"]  = 3, -- 右上
+        ["-1,1"] = 1, -- 左上
+        ["0,1"]  = 2, -- 上
+        ["1,1"]  = 3, -- 右上
         ["-1,0"]  = 4, -- 左
         ["1,0"]   = 5, -- 右
-        ["-1,1"]  = 6, -- 左下
-        ["0,1"]   = 7, -- 下
-        ["1,1"]   = 8  -- 右下
+        ["-1,-1"]  = 6, -- 左下
+        ["0,-1"]   = 7, -- 下
+        ["1,-1"]   = 8  -- 右下
     }
 
     -- 计算相对坐标
@@ -82,6 +82,8 @@ local function getValidOptions(x, y)
 
     -- 查找选项编号
     local key = string.format("%d,%d", dx, dy)
+
+    TraceAI('getValidOptions'..key)
     return optionsMap[key]
 end
 
@@ -89,6 +91,7 @@ end
 local OptionHandlers = {
     --option 1 开启 farm task
     function()
+        TraceAI('OPTION 1')
         ---@type FarmTask
         local task = {
             name = 'Farm'
@@ -126,38 +129,46 @@ local CommandModule = Sequence:new({
                 -- 判断第一位是不是 FOLLOW_CMD,如果是，进入后续 x tick 的第二 cmd 的判断
                 ConditionNode:new(createCmdCondition(1, FOLLOW_CMD)),
                 -- 这里要进行第二次判断,如果通过 就结束
-                Inverter:new(
-                    Selector:new({
-                        Sequence:new({
-                            -- alt+t 连击 结束所有任务，进入 IDLE 状态
-                            ConditionNode:new(createCmdCondition(2, FOLLOW_CMD)),
-                            ActionNode:new(function()
-                                clear()
-                                Blackboard.task = nil
-                                Blackboard.task_queue:clear()
 
+                Selector:new({
+                    Sequence:new({
+                        -- alt+t 连击 结束所有任务，进入 IDLE 状态
+                        ConditionNode:new(createCmdCondition(2, FOLLOW_CMD)),
+                        ActionNode:new(function()
+                            clear()
+                            Blackboard.task = nil
+                            Blackboard.task_queue:clear()
+
+                            return NodeStates.SUCCESS
+                        end)
+                    }),
+                    Sequence:new({
+                        -- 用 Move 命令选中 人物周边8个格子，代表8个选项
+                        ConditionNode:new(createCmdCondition(2, MOVE_CMD)),
+                        ActionNode:new(function()
+                            local cmd = Blackboard.cmds:get(2)
+
+                            if cmd == nil then
+                                return NodeStates.FAILURE
+                            end
+
+                            local x = cmd[2]
+                            local y = cmd[3]
+
+
+                            local opt = getValidOptions(x, y)
+
+                            if opt == nil then
+                                return NodeStates.FAILURE
+                            else
+                                -- 执行对应选项 handler
+                                OptionHandlers[opt]()
                                 return NodeStates.SUCCESS
-                            end)
-                        }),
-                        Sequence:new({
-                            -- 用 Move 命令选中 人物周边8个格子，代表8个选项
-                            ConditionNode:new(createCmdCondition(2, MOVE_CMD)),
-                            ActionNode:new(function()
-                                local _, x, y = Blackboard.cmds:get(2)
+                            end
+                        end)
+                    }),
+                }),
 
-                                local opt = getValidOptions(x, y)
-
-                                if opt == nil then
-                                    return NodeStates.FAILURE
-                                else
-                                    -- 执行对应选项 handler
-                                    OptionHandlers[opt]()
-                                    return NodeStates.SUCCESS
-                                end
-                            end)
-                        }),
-                    })
-                ),
                 -- 删除第二位
                 ActionNode:new(function()
                     Blackboard.cmds:clear()
@@ -169,7 +180,10 @@ local CommandModule = Sequence:new({
                 Timeout:new(
                     timerName,
                     -- 清空命令
-                    ActionNode:new(clear),
+                    ActionNode:new(function ()
+                        clear()
+                        return NodeStates.FAILURE
+                    end),
                     2000
                 )
             }),

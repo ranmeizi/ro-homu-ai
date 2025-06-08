@@ -8,6 +8,8 @@ local MOVE_RIGHT = ActionNode:new(function()
     Move(Blackboard.id, Blackboard.objects.homu.pos.x + 1, Blackboard.objects.homu.pos.y)
 end)
 
+TraceAI('teee')
+
 -- 定义行为树结构
 TestBehaviorTree.root = Sequence:new({
     CommandModule,
