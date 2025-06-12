@@ -156,3 +156,9 @@ function TryJumpTask(task, options)
 
 	return NodeStates.SUCCESS
 end
+
+-- 是否经历了 X 秒
+---@param sec number
+function PerXSecond(sec)
+	return GetTick() // 1000 % sec == 0
+end

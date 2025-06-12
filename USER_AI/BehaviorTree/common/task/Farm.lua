@@ -1,7 +1,7 @@
 local FindTarget = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.FindTarget'
 
 --[[
-    Farm
+    Farm loop
 
     从 Command 发送练级命令，进入练级任务
 
@@ -29,13 +29,16 @@ local Farm = Sequence:new({
 
         if res == nil then
             MoveToOwner(Blackboard.id)
-            return NodeStates.FAILURE
-        else
-            return NodeStates.SUCCESS
         end
+
+        return NodeStates.SUCCESS
     end),
     -- 发布Kill任务
     ActionNode:new(function()
+        if Blackboard.objects.bestTarget == nil then
+            return NodeStates.FAILURE
+        end
+
          -- 插队一个 Kill
          local task = {
             name = 'Kill',

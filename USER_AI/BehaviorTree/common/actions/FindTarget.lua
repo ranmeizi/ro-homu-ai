@@ -1,3 +1,16 @@
+--- @param id number
+local function checkBlackList(id)
+    local val = Blackboard.black_list_cache:get(id)
+
+    return val == nil
+end
+
+local function clearBlackListInterval()
+    if PerXSecond(60 * 10) then
+        Blackboard.black_list_cache:clearExpired()
+    end
+end
+
 --[[
     应该是探测不到客户端的 hp sp
     选最近的把
@@ -37,6 +50,14 @@ end
 local function findBestTargetInMonsters()
     local target = nil
     for id, monster in pairs(Blackboard.objects.monsters) do
+        -- 忽略黑名单里的怪
+        if (checkBlackList(monster)) then
+            -- 忽略
+            goto continue
+        end
+
+        -- 也许这里要选择先打远程
+
         if target == nil then
             target = monster
         else
@@ -44,7 +65,11 @@ local function findBestTargetInMonsters()
                 target = monster
             end
         end
+
+        ::continue::
     end
+
+
 
     return target and target.id or nil
 end
@@ -75,9 +100,9 @@ end
 ]]
 local function madDogFindTarget()
     -- 1. 第一目标是主人打的
-    -- if Blackboard.objects.owner.target ~= nil then
-    --     return Blackboard.objects.owner.target
-    -- end
+    if Blackboard.objects.owner.target ~= nil then
+        return Blackboard.objects.owner.target
+    end
 
     -- 2. monster 里找
     return findBestTargetInMonsters()
@@ -120,5 +145,6 @@ end
 
 return {
     madDogFindTarget = madDogFindTarget,
-    loyalDogFindTarget = loyalDogFindTarget
+    loyalDogFindTarget = loyalDogFindTarget,
+    clearBlackListInterval = clearBlackListInterval
 }

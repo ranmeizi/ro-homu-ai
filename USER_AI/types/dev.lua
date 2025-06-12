@@ -21,3 +21,6 @@
 ---@class AbstractTimer 计时器
 ---@field startTime number 开始时间
 ---@field timeout number   延迟时间
+
+---@class KeepBuffOptions 保持增益buff
+---@field 

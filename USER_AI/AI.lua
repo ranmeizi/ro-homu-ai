@@ -1,28 +1,25 @@
 -- 挂全局
 _G.json = require('AI_sakray/USER_AI/libs/dkjson')
 _G.Array = require('AI_sakray/USER_AI/libs/ArrayLike')
+_G.CacheControl = require('AI_sakray/USER_AI/libs/CacheControl')
 
 
-require 'AI_sakray.USER_AI.Const'
-require 'AI_sakray.USER_AI.Util'
-require 'AI_sakray.USER_AI.Memory'
+require('AI_sakray/USER_AI/Const')
+require('AI_sakray/USER_AI/Util')
 require('AI_sakray/USER_AI/BehaviorTree/Core/init')
 
 
 local TestingBT = require 'AI_sakray.USER_AI.HOMU.Testing_behavior'
+local clearBlackListInterval = require 'AI_sakray/USER_AI/BehaviorTree/common/actions/FindTarget'
+local HpSpRecorder = require('AI_sakray/USER_AI/HOMU/calc')
 
-
-
--- 读取 memory
-Memory.load()
+local RecoveryRecorder = HpSpRecorder.new(120, 200)
 
 -- 全局黑板
 Blackboard = {
     id = nil, -- 生命体id
 
     owner_id = nil,
-
-    memory = Memory, -- 需要持久化的数据
 
     target_id = nil, -- 目标(不一定是攻击对象，也有可能有些整活用这个)
 
@@ -45,6 +42,9 @@ Blackboard = {
 
     -- 任务队列
     task_queue = Array.new({}),
+
+    -- 寻敌黑名单
+    black_list_cache = CacheControl:new(),
 
     -- 调用 Environment 记录 objects , 后面可以用外置应用读出来
     objects = {
@@ -100,6 +100,14 @@ Blackboard = {
         -- 记录 find taeget 的结果
         bestTarget = nil
     },
+
+    -- 记录日志
+    logs = {
+        -- hp 回复速度
+        hp_avg_regen = 0,
+        -- sp 回复速度
+        sp_avg_regen = 0,
+    }
 }
 
 -- 初始化行为树
@@ -128,12 +136,6 @@ local function loop(id)
     Blackboard.id = id
     Blackboard.owner_id = GetV(V_OWNER, id)
 
-    Memory.tick = GetTick()
-
-    -- if Memory.tick % 10 == 0 then
-    --     TraceAI('env' .. json.encode(Blackboard.objects))
-    -- end
-
     showTasks()
 
     -- 运行行为树
@@ -143,6 +145,23 @@ end
 function AI(id)
     xpcall(function()
         loop(id)
+
+        -- 清理黑名单
+        clearBlackListInterval()
+
+        -- 统计代码
+        if PerXSecond(1) then
+            RecoveryRecorder:record(
+                Blackboard.objects.homu.hp,
+                Blackboard.objects.homu.hp_max,
+                Blackboard.objects.homu.sp,
+                Blackboard.objects.homu.sp_max
+            )
+        end
+
+        if PerXSecond(60) then
+            RecoveryRecorder:analyze()
+        end
     end, function(err)
         TraceAI('出错天了噜' .. tostring(err))
         -- 保存 memory

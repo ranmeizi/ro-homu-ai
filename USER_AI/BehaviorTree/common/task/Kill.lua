@@ -34,6 +34,11 @@ local MoveTo = require 'AI_sakray/USER_AI/BehaviorTree/common/actions/MoveTo'
 
 --- @param task KillTask
 local function ConditionIsDead(task)
+    --- 没目标了 重新找
+    if (task == nil) then
+        return NodeStates.SUCCESS
+    end
+
     local target_id = task.target_id
     TraceAI('ConditionIsDead' .. target_id)
     local target = Blackboard.objects.monsters[target_id]
@@ -58,10 +63,38 @@ local function ActionMoveTo(task)
     return MoveTo({ target_id = task.target_id })
 end
 
+--- 多少秒没走到放弃目标
+local GIVEUP_TIME = 7 * 1000
+--- 忽略该目标多久 - 2分钟
+local IGNORE_TIME = 60 * 1000 * 2
+
+--- 支持放弃的 moveto 计时器内返回 success 超出返回 failure
+--- 然后把它放入黑名单呆一会
+local giveupable_moveto = Selector:new({
+    Timeout:new(
+        'moveto_timer',
+        -- 加入黑名单
+        ActionNode:new(function()
+            -- 添加到黑名单
+            local task = Blackboard.task
+            if task == nil then
+                return NodeStates.FAILURE
+            end
+            Blackboard.black_list_cache:set(task.target_id, task.target_id, IGNORE_TIME)
+
+            -- 放弃这个目标
+            return NodeStates.SUCCESS
+        end),
+        GIVEUP_TIME
+    ),
+    -- 移动到目标
+    ActionNode:new(Task.withTask(ActionMoveTo))
+})
+
 local Kill = Task:new(
     RunningOrNot:new(
         Sequence:new({
-             -- 条件 目标活着?
+            -- 条件 目标活着?
             Inverter:new(
                 ConditionNode:new(
                     Task.withTask(ConditionIsDead)
@@ -74,7 +107,8 @@ local Kill = Task:new(
                         ActionNode:new(Task.withTask(ActionAttack))
                     ),
                     -- 移动到目标
-                    ActionNode:new(Task.withTask(ActionMoveTo))
+                    -- ActionNode:new(Task.withTask(ActionMoveTo))
+                    giveupable_moveto
                 })
             )
         })
