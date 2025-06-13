@@ -1,5 +1,6 @@
 local ResCommand = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.ResCommand'
 local UseSkill = require('AI_sakray/USER_AI/BehaviorTree/common/actions/UseSkill')
+local Skill = require("AI_sakray/USER_AI/HOMU/skill")
 
 --- 创建 MoveTo Task
 --- [MoveTo.lua](${workspaceFolder}/USER_AI/BehaviorTree/common/task/MoveTo.lua)
@@ -66,14 +67,14 @@ local function getValidOptions(x, y)
 
     -- 定义相对坐标与选项编号的映射
     local optionsMap = {
-        ["-1,1"] = 1, -- 左上
-        ["0,1"]  = 2, -- 上
-        ["1,1"]  = 3, -- 右上
+        ["-1,1"]  = 1, -- 左上
+        ["0,1"]   = 2, -- 上
+        ["1,1"]   = 3, -- 右上
         ["-1,0"]  = 4, -- 左
         ["1,0"]   = 5, -- 右
-        ["-1,-1"]  = 6, -- 左下
-        ["0,-1"]   = 7, -- 下
-        ["1,-1"]   = 8  -- 右下
+        ["-1,-1"] = 6, -- 左下
+        ["0,-1"]  = 7, -- 下
+        ["1,-1"]  = 8  -- 右下
     }
 
     -- 计算相对坐标
@@ -83,7 +84,7 @@ local function getValidOptions(x, y)
     -- 查找选项编号
     local key = string.format("%d,%d", dx, dy)
 
-    TraceAI('getValidOptions'..key)
+    TraceAI('getValidOptions' .. key)
     return optionsMap[key]
 end
 
@@ -101,8 +102,19 @@ local OptionHandlers = {
 
         clear()
     end,
-    -- option2
-    Todo,
+    -- option2 开关 保持buff environment module 去控制技能释放
+    function()
+        local conf = Blackboard.buff_conf
+        local type = Blackboard.type
+
+        if conf == nil then
+            -- 开启
+            Blackboard.buff_conf = Skill.buff_conf[type]
+        else
+            -- 关闭
+            Blackboard.buff_conf = nil
+        end
+    end,
     -- option3
     Todo,
     -- option4
@@ -180,7 +192,7 @@ local CommandModule = Sequence:new({
                 Timeout:new(
                     timerName,
                     -- 清空命令
-                    ActionNode:new(function ()
+                    ActionNode:new(function()
                         clear()
                         return NodeStates.FAILURE
                     end),

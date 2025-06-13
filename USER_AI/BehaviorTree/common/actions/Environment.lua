@@ -39,12 +39,13 @@ function Environment()
             updateTargetInfoOnTable(Blackboard.objects.monsters[value], value)
             -- 是敌人的话多检测一下 target 计算一下 distance
             Blackboard.objects.monsters[value].distance = GetDistance2(Blackboard.id, value)
+            Blackboard.objects.monsters[value].distance_owner = GetDistance2(Blackboard.owner_id, value)
         end
     end
 
     -- 清空仇恨列表
-    Blackboard.objects.hateListHomu:clear()
-    Blackboard.objects.hateListOwner:clear()
+    Blackboard.objects.aggroListHomu:clear()
+    Blackboard.objects.aggroListOwner:clear()
 
     -- 从 monster 列表里统计一下 仇恨列表
     for index, value in ipairs(Blackboard.objects.monsters) do
@@ -53,9 +54,9 @@ function Environment()
             distance = value.distance
         }
         if value.target == Blackboard.id then
-            Blackboard.objects.hateListHomu:push(item)
+            Blackboard.objects.aggroListHomu:push(item)
         elseif value.target == Blackboard.owner_id then
-            Blackboard.objects.hateListOwner:push(item)
+            Blackboard.objects.aggroListOwner:push(item)
         end
     end
 

@@ -133,7 +133,7 @@ end
 
 -- 插队
 ---comment
----@param task MoveToTask | KillTask | StopTask
+---@param task MoveToTask | KillTask | StopTask | FarmTask | UseSkillTask
 ---@param options TryJumpTaskOptions | nil
 function TryJumpTask(task, options)
 	-- 保存当前任务

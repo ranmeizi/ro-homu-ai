@@ -75,7 +75,7 @@ local function findBestTargetInMonsters()
 end
 
 -- 从 仇恨列表中找最近的怪
-local function findNearestInHateList(list)
+local function findNearestInAggroList(list)
     local item = nil
 
     for index, value in ipairs(list) do
@@ -100,9 +100,9 @@ end
 ]]
 local function madDogFindTarget()
     -- 1. 第一目标是主人打的
-    if Blackboard.objects.owner.target ~= nil then
-        return Blackboard.objects.owner.target
-    end
+    -- if Blackboard.objects.owner.target ~= nil then
+    --     return Blackboard.objects.owner.target
+    -- end
 
     -- 2. monster 里找
     return findBestTargetInMonsters()
@@ -116,19 +116,19 @@ end
 ]]
 local function loyalDogFindTarget()
     -- 1. 第一目标是主人打的
-    if Blackboard.objects.owner.target ~= nil then
-        return Blackboard.objects.owner.target
-    end
+    -- if Blackboard.objects.owner.target ~= nil then
+    --     return Blackboard.objects.owner.target
+    -- end
 
     -- 2. 攻击自己的怪
-    local res = findNearestInHateList(Blackboard.objects.hateListHomu)
+    local res = findNearestInAggroList(Blackboard.objects.aggroListHomu)
 
     if res ~= nil then
         return res
     end
 
     -- 3. 攻击主人的目标
-    res = findNearestInHateList(Blackboard.objects.hateListOwner)
+    res = findNearestInAggroList(Blackboard.objects.hateListOwner)
 
     if res ~= nil then
         return res

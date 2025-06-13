@@ -10,6 +10,7 @@ require('AI_sakray/USER_AI/BehaviorTree/Core/init')
 
 
 local TestingBT = require 'AI_sakray.USER_AI.HOMU.Testing_behavior'
+local FilirBT = require 'AI_sakray.USER_AI.HOMU.Filir.behavior'
 local clearBlackListInterval = require 'AI_sakray/USER_AI/BehaviorTree/common/actions/FindTarget'
 local HpSpRecorder = require('AI_sakray/USER_AI/HOMU/calc')
 
@@ -21,9 +22,7 @@ Blackboard = {
 
     owner_id = nil,
 
-    target_id = nil, -- 目标(不一定是攻击对象，也有可能有些整活用这个)
-
-    attack_id = nil, -- 攻击目标
+    type = nil,
 
     -- 客户端发送命令列表
     cmds = Array:new({}),
@@ -45,6 +44,12 @@ Blackboard = {
 
     -- 寻敌黑名单
     black_list_cache = CacheControl:new(),
+
+    -- 技能冷却
+    cooldown = CacheControl:new(),
+
+    -- 保持增益buff的配置项 (由 Option2 开启/关闭，或是由task开启/关闭)
+    buff_conf = nil,
 
     -- 调用 Environment 记录 objects , 后面可以用外置应用读出来
     objects = {
@@ -92,10 +97,10 @@ Blackboard = {
         monsters = {},
 
         -- 生命体 仇恨列表
-        hateListHomu = Array:new({}),
+        aggroListHomu = Array:new({}),
 
         -- 主人 仇恨列表
-        hateListOwner = Array:new({}),
+        aggroListOwner = Array:new({}),
 
         -- 记录 find taeget 的结果
         bestTarget = nil
@@ -112,8 +117,9 @@ Blackboard = {
 
 -- 初始化行为树
 local tree = BehaviorTree:new(TestingBT.root)
+local filir_tree = BehaviorTree:new(FilirBT.root)
 
-function showTasks()
+local function showTasks()
     if Blackboard.task == nil then
         TraceAI('current task: nil')
     else
@@ -135,18 +141,19 @@ local function loop(id)
     -- 记录id
     Blackboard.id = id
     Blackboard.owner_id = GetV(V_OWNER, id)
+    Blackboard.type = GetV(V_HOMUNTYPE, id)
 
     showTasks()
 
     -- 运行行为树
-    tree:run()
+    filir_tree:run()
 end
 
 function AI(id)
     xpcall(function()
         loop(id)
 
-        -- 清理黑名单
+        -- 清理过期黑名单
         clearBlackListInterval()
 
         -- 统计代码

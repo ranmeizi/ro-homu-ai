@@ -31,6 +31,8 @@
 
 local NormalAttack = require 'AI_sakray/USER_AI/BehaviorTree/common/actions/NormalAttack'
 local MoveTo = require 'AI_sakray/USER_AI/BehaviorTree/common/actions/MoveTo'
+local UseSkill = require 'AI_sakray/USER_AI/BehaviorTree/common/actions/UseSkill'
+local SkillInfo = require('AI_sakray/USER_AI/HOMU/skill')
 
 --- @param task KillTask
 local function ConditionIsDead(task)
@@ -91,6 +93,131 @@ local giveupable_moveto = Selector:new({
     ActionNode:new(Task.withTask(ActionMoveTo))
 })
 
+-- 默认策略
+local default_strategy = Succeeder:new(
+    Sequence:new({
+        -- 尝试攻击
+        Inverter:new(
+            ActionNode:new(Task.withTask(ActionAttack))
+        ),
+        -- 移动到目标
+        -- ActionNode:new(Task.withTask(ActionMoveTo))
+        giveupable_moveto
+    })
+)
+
+-- 技能攻击比较远距离的人
+local filir_kill_skill_on_way_branch = Inverter:new(
+    Selector:new({
+        -- 技能攻击
+        Sequence:new({
+            ConditionNode:new(function()
+                -- 在路上击杀他
+                if Blackboard.task._skillOnWay == true then
+                    return NodeStates.SUCCESS
+                else
+                    return NodeStates.FAILURE
+                end
+            end),
+            ---@param task KillTask
+            ActionNode:new(Task.withTask(function(task)
+                UseSkill(5, HFLI_MOON, task.target_id)
+                return NodeStates.SUCCESS
+            end))
+        }),
+        -- 判断要不要技能攻击
+        Sequence:new({
+            -- 如果sp充足(10次5级月光sp + buff最低消费)且目标距离>9
+            ConditionNode:new(function()
+                -- 看看能否连续使用10次5级月光
+                local moon_10_cost = SkillInfo.skillbook[HFLI_MOON]['5'].sp_cost * 10
+                -- 最低保留sp 保证能用1次 加速+闪避
+                local min_sp = SkillInfo.skillbook[HFLI_FLEET]['1'].sp_cost +
+                    SkillInfo.skillbook[HFLI_SPEED]['1'].sp_cost
+
+                local min_limit = moon_10_cost + min_sp
+
+                -- 距离
+                local distance = GetDistance2(Blackboard.task.target_id, Blackboard.id)
+
+                if distance > 9 and Blackboard.objects.homu.sp > min_limit then
+                    return NodeStates.SUCCESS
+                else
+                    return NodeStates.FAILURE
+                end
+            end),
+            ActionNode:new(function()
+                Blackboard.task._skillOnWay = true
+                return NodeStates.SUCCESS
+            end)
+        })
+    })
+)
+
+-- 飞里乐专属 kill 策略
+local filir_kill_subtree = Succeeder:new(
+    Sequence:new({
+        --- 因为这里 普攻接技能没有延迟，但是技能接普攻有3秒延迟
+        --- 所以尽量全用普攻 或是全用技能，如果普攻接技能了就血赚，最好不要出现技能接普攻的现象，这样就是血赚
+        ---
+        ---1. 第一下一定要普通攻击，因为普通攻击接技能没有延迟
+        ---2. 如果sp > 80%，就用技能打
+        ---3. 如果sp < 最低消费 就开始不用技能攒蓝量
+        ---
+        ---1 是尽量嫖 普攻接技能的延迟
+        ---2～3 是尽量避免出现 技能接普攻的现象
+        ---
+        ---然后使用 伤害/sp 性价比最高的技能等级，这样输出最大化
+        Inverter:new(
+            Selector:new({
+                -- 处理 第一下普攻
+                Sequence:new({
+                    ---@param task KillTask
+                    ConditionNode:new(Task.withTask(function(task)
+                        if task._hasFirstAttack == true then
+                            return NodeStates.FAILURE
+                        else
+                            return NodeStates.SUCCESS
+                        end
+                    end)),
+                    ActionNode:new(function()
+                        NormalAttack(task.target_id)
+                        -- 打完第一下了
+                        Blackboard.task._hasFirstAttack = true
+                        return NodeStates.SUCCESS
+                    end)
+                }),
+                -- 要不要技能攻击
+                ---@param task KillTask
+                ActionNode:new(Task.withTask(function(task)
+                    if task.mode ~= 'skillonly' and Blackboard.objects.homu.sp > Blackboard.objects.homu.sp_max * 0.8 then
+                        Blackboard.task.mode = 'skillonly'
+                    end
+
+                    if task.mode == 'skillonly' and Blackboard.objects.homu.sp < SkillInfo.skillbook[HFLI_FLEET]['1'].sp_cost +
+                        SkillInfo.skillbook[HFLI_SPEED]['1'].sp_cost then
+                        Blackboard.task.mode = 'default'
+                    end
+
+                    return NodeStates.FAILURE
+                end)),
+                ---@param task KillTask
+                ActionNode:new(Task.withTask(function(task)
+                    if task.mode == 'skillonly' then
+                        return UseSkill(1, HFLI_MOON, task.target_id)
+                    else
+                        return NormalAttack(task.target_id)
+                    end
+                end))
+            })
+        ),
+        -- 在这里考虑，如果sp充足(10次5级月光sp + buff最低消费)且目标距离>9 ,全程月光攻击 这样如果如果怪死在路上了就赚大了
+        -- 人为判断，如果没有5级月光，就把这里注释了吧。。。
+        filir_kill_skill_on_way_branch,
+        giveupable_moveto
+    })
+)
+
 local Kill = Task:new(
     RunningOrNot:new(
         Sequence:new({
@@ -100,17 +227,21 @@ local Kill = Task:new(
                     Task.withTask(ConditionIsDead)
                 )
             ),
-            Succeeder:new(
+            Selector:new({
+                -- 判断是飞里乐
                 Sequence:new({
-                    -- 尝试攻击
-                    Inverter:new(
-                        ActionNode:new(Task.withTask(ActionAttack))
-                    ),
-                    -- 移动到目标
-                    -- ActionNode:new(Task.withTask(ActionMoveTo))
-                    giveupable_moveto
-                })
-            )
+                    ConditionNode:new(function()
+                        if Blackboard.type == FILIR then
+                            return NodeStates.SUCCESS
+                        else
+                            return NodeStates.FAILURE
+                        end
+                    end),
+                    filir_kill_subtree
+                }),
+                -- 默认策略
+                default_strategy
+            })
         })
     )
 )
