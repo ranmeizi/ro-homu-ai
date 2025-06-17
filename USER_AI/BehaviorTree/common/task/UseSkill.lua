@@ -13,7 +13,7 @@ return Task:new(
 
             UseSkill(task.level, task.type, task.target_id)
 
-            return NodeStates.SUCCESS
+            return NodeStates.FAILURE
         end)
     )
 )

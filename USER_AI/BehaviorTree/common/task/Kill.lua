@@ -140,6 +140,7 @@ local filir_kill_skill_on_way_branch = Inverter:new(
                 -- 距离
                 local distance = GetDistance2(Blackboard.task.target_id, Blackboard.id)
 
+                TraceAI('判断sp呢')
                 if distance > 9 and Blackboard.objects.homu.sp > min_limit then
                     return NodeStates.SUCCESS
                 else
@@ -180,16 +181,23 @@ local filir_kill_subtree = Succeeder:new(
                             return NodeStates.SUCCESS
                         end
                     end)),
-                    ActionNode:new(function()
-                        NormalAttack(task.target_id)
+                    ActionNode:new(Task.withTask(function(task)
+                        local res = NormalAttack(task.target_id)
+
+                        -- 攻击失败
+                        if (res == NodeStates.FAILURE) then
+                            return res
+                        end
+
                         -- 打完第一下了
                         Blackboard.task._hasFirstAttack = true
                         return NodeStates.SUCCESS
-                    end)
+                    end))
                 }),
                 -- 要不要技能攻击
                 ---@param task KillTask
                 ActionNode:new(Task.withTask(function(task)
+                    TraceAI('攻击失败了，判断技能攻击')
                     if task.mode ~= 'skillonly' and Blackboard.objects.homu.sp > Blackboard.objects.homu.sp_max * 0.8 then
                         Blackboard.task.mode = 'skillonly'
                     end

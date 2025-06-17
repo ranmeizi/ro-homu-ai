@@ -1,8 +1,8 @@
 --- @param id number
 local function checkBlackList(id)
     local val = Blackboard.black_list_cache:get(id)
-
-    return val == nil
+    TraceAI('DINF LOG'..json.encode(val))
+    return val ~= nil
 end
 
 local function clearBlackListInterval()
@@ -51,28 +51,22 @@ local function findBestTargetInMonsters()
     local target = nil
     for id, monster in pairs(Blackboard.objects.monsters) do
         -- 忽略黑名单里的怪
-        if (checkBlackList(monster)) then
-            -- 忽略
-            goto continue
-        end
-
-        -- 也许这里要选择先打远程
-
-        if target == nil then
-            target = monster
-        else
-            if monster.distance < target.distance then
+        if checkBlackList(monster) == false then
+            if target == nil then
                 target = monster
+            else
+                if monster.distance < target.distance then
+                    target = monster
+                end
             end
         end
-
-        ::continue::
     end
 
 
 
     return target and target.id or nil
 end
+
 
 -- 从 仇恨列表中找最近的怪
 local function findNearestInAggroList(list)

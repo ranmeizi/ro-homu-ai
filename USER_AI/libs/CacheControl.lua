@@ -10,7 +10,7 @@ end
 
 -- 设置缓存项
 function CacheControl:set(key, value, ttl)
-    local now = os.time() * 1000  -- 转换为毫秒，与JavaScript的Date.now()一致
+    local now = GetTick()  -- 转换为毫秒，与JavaScript的Date.now()一致
     local item = {
         value = value,
         expiry = ttl and (now + ttl) or nil
@@ -20,7 +20,7 @@ end
 
 -- 获取缓存项
 function CacheControl:get(key)
-    local now = os.time() * 1000
+    local now = GetTick()
     local item = self.store[key]
     
     if item then
@@ -41,7 +41,7 @@ end
 
 -- 清理所有过期的缓存项
 function CacheControl:clearExpired()
-    local now = os.time() * 1000
+    local now = GetTick()
     for key, item in pairs(self.store) do
         if item.expiry and now > item.expiry then
             self:delete(key)

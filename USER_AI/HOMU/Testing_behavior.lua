@@ -1,5 +1,7 @@
 local CommandModule = require 'AI_sakray.USER_AI.BehaviorTree.common.subtrees.CommandModule'
+TraceAI('TaskModule')
 local TaskModule = require 'AI_sakray.USER_AI.BehaviorTree.common.subtrees.TaskModule'
+
 local EnvironmentModule = require 'AI_sakray.USER_AI.BehaviorTree.common.subtrees.EnvironmentModule'
 local IDLE = require('AI_sakray/USER_AI/BehaviorTree/common/subtrees/IDLE')
 local TestBehaviorTree = {}

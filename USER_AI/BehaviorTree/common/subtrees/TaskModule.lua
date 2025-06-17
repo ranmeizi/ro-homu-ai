@@ -1,18 +1,20 @@
+TraceAI('Farm')
 local Farm = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Farm'
+
 local MoveTo = require 'AI_sakray.USER_AI.BehaviorTree.common.task.MoveTo'
 local Kill = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Kill'
 local Stop = require('AI_sakray/USER_AI/BehaviorTree/common/task/Stop')
+local UseSkill = require('AI_sakray/USER_AI/BehaviorTree/common/task/UseSkill')
 
 local handlers = {
     MoveTo = MoveTo,
     Kill = Kill,
     Stop = Stop,
-    Farm = Farm
+    Farm = Farm,
+    UseSkill = UseSkill
 }
 
-local TaskModule = {
-
-}
+local TaskModule = {}
 TaskModule.__index = TaskModule
 
 function TaskModule.execute()

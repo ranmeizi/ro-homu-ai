@@ -1,3 +1,4 @@
+TraceAI('FindTarget')
 local FindTarget = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.FindTarget'
 
 --[[

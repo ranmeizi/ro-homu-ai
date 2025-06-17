@@ -3,7 +3,7 @@ local Environment = require 'AI_sakray.USER_AI.BehaviorTree.common.actions.Envir
 local EnvironmentSubTree = Sequence:new({
     ActionNode:new(Environment),
     -- 需要保持 Buff 吗
-    Succeeder:new({
+    Succeeder:new(
         Sequence:new({
             -- 判断 续buff 开关
             ConditionNode:new(function()
@@ -36,7 +36,7 @@ local EnvironmentSubTree = Sequence:new({
                 end
             end)
         })
-    }),
+    ),
     -- 保持在屏幕内
     ActionNode:new(function()
         -- 如果超过，那么 插队一个下一tick回到视野内的Task

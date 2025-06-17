@@ -5,13 +5,16 @@ _G.CacheControl = require('AI_sakray/USER_AI/libs/CacheControl')
 
 
 require('AI_sakray/USER_AI/Const')
-require('AI_sakray/USER_AI/Util')
+require 'AI_sakray.USER_AI.Util'
 require('AI_sakray/USER_AI/BehaviorTree/Core/init')
 
-
+TraceAI('test vt start')
 local TestingBT = require 'AI_sakray.USER_AI.HOMU.Testing_behavior'
-local FilirBT = require 'AI_sakray.USER_AI.HOMU.Filir.behavior'
-local clearBlackListInterval = require 'AI_sakray/USER_AI/BehaviorTree/common/actions/FindTarget'
+TraceAI('test vt over')
+local FilirBT = require 'AI_sakray.USER_AI.HOMU.Filir_behavior'
+TraceAI('tree over')
+local clearBlackListInterval = require 'AI_sakray/USER_AI/BehaviorTree/common/actions/FindTarget'.clearBlackListInterval
+TraceAI('calc start')
 local HpSpRecorder = require('AI_sakray/USER_AI/HOMU/calc')
 
 local RecoveryRecorder = HpSpRecorder.new(120, 200)
@@ -164,6 +167,17 @@ function AI(id)
                 Blackboard.objects.homu.sp,
                 Blackboard.objects.homu.sp_max
             )
+        end
+
+        if PerXSecond(10) then
+            local options = {
+                indent = true,    -- 美化输出，带缩进和换行
+                level = 0,        -- 初始缩进级别
+                noprotect = false -- 不保护循环引用
+            }
+
+            TraceAI(json.encode(Blackboard.black_list_cache, options))
+            TraceAI(json.encode(Blackboard.cooldown, options))
         end
 
         if PerXSecond(60) then
