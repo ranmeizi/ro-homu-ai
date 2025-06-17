@@ -140,7 +140,7 @@ local filir_kill_skill_on_way_branch = Inverter:new(
                 -- 距离
                 local distance = GetDistance2(Blackboard.task.target_id, Blackboard.id)
 
-                TraceAI('判断sp呢')
+                TraceAI('判断sp呢 min limit = ' .. min_limit)
                 if distance > 9 and Blackboard.objects.homu.sp > min_limit then
                     return NodeStates.SUCCESS
                 else
@@ -169,6 +169,12 @@ local filir_kill_subtree = Succeeder:new(
         ---2～3 是尽量避免出现 技能接普攻的现象
         ---
         ---然后使用 伤害/sp 性价比最高的技能等级，这样输出最大化
+        ---
+        -- 在这里考虑，如果sp充足(10次5级月光sp + buff最低消费)且目标距离>9 ,全程月光攻击 这样如果如果怪死在路上了就赚大了
+        -- 人为判断，如果没有5级月光，就把这里注释了吧。。。
+
+        -- 这里有一个问题如果秒了就走会因为硬直走不动道，是不是说在技能硬直期间再考虑从使用这个
+        filir_kill_skill_on_way_branch,
         Inverter:new(
             Selector:new({
                 -- 处理 第一下普攻
@@ -197,6 +203,7 @@ local filir_kill_subtree = Succeeder:new(
                 -- 要不要技能攻击
                 ---@param task KillTask
                 ActionNode:new(Task.withTask(function(task)
+                    -- 这里不对，应该保持2格攻击范围内再使用技能
                     TraceAI('攻击失败了，判断技能攻击')
                     if task.mode ~= 'skillonly' and Blackboard.objects.homu.sp > Blackboard.objects.homu.sp_max * 0.8 then
                         Blackboard.task.mode = 'skillonly'
@@ -219,9 +226,6 @@ local filir_kill_subtree = Succeeder:new(
                 end))
             })
         ),
-        -- 在这里考虑，如果sp充足(10次5级月光sp + buff最低消费)且目标距离>9 ,全程月光攻击 这样如果如果怪死在路上了就赚大了
-        -- 人为判断，如果没有5级月光，就把这里注释了吧。。。
-        filir_kill_skill_on_way_branch,
         giveupable_moveto
     })
 )
