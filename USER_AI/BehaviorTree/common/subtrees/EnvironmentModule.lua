@@ -44,12 +44,12 @@ local EnvironmentSubTree = Sequence:new({
             -- 走两步得了，push 一个 Stop task
             MoveToOwner(Blackboard.id)
 
-            local currTask = Blackboard.task
+            -- local currTask = Blackboard.task
 
-            if currTask ~= nil then
-                Blackboard.task = nil
-                Blackboard.task_queue:unshift(currTask)
-            end
+            -- if currTask ~= nil then
+            --     Blackboard.task = nil
+            --     Blackboard.task_queue:unshift(currTask)
+            -- end
 
             local task = {
                 name = 'Stop'

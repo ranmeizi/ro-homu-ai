@@ -16,6 +16,4 @@ FilirBehaviorTree.root = Sequence:new({
     IDLE
 })
 
-
-
 return FilirBehaviorTree

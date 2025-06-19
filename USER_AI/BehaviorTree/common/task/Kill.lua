@@ -174,7 +174,7 @@ local filir_kill_subtree = Succeeder:new(
         -- 人为判断，如果没有5级月光，就把这里注释了吧。。。
 
         -- 这里有一个问题如果秒了就走会因为硬直走不动道，是不是说在技能硬直期间再考虑从使用这个
-        filir_kill_skill_on_way_branch,
+        -- filir_kill_skill_on_way_branch,
         Inverter:new(
             Selector:new({
                 -- 处理 第一下普攻
@@ -197,13 +197,15 @@ local filir_kill_subtree = Succeeder:new(
 
                         -- 打完第一下了
                         Blackboard.task._hasFirstAttack = true
+
+                        -- TODO 这里往点击队列里 push 一个 pos
+
                         return NodeStates.SUCCESS
                     end))
                 }),
                 -- 要不要技能攻击
                 ---@param task KillTask
                 ActionNode:new(Task.withTask(function(task)
-                    -- 这里不对，应该保持2格攻击范围内再使用技能
                     TraceAI('攻击失败了，判断技能攻击')
                     if task.mode ~= 'skillonly' and Blackboard.objects.homu.sp > Blackboard.objects.homu.sp_max * 0.8 then
                         Blackboard.task.mode = 'skillonly'
@@ -218,11 +220,16 @@ local filir_kill_subtree = Succeeder:new(
                 end)),
                 ---@param task KillTask
                 ActionNode:new(Task.withTask(function(task)
-                    if task.mode == 'skillonly' then
-                        return UseSkill(1, HFLI_MOON, task.target_id)
-                    else
-                        return NormalAttack(task.target_id)
+                    if task.mode == 'skillonly' and GetDistance2(task.target_id, Blackboard.id) <= 2 then
+                        UseSkill(1, HFLI_MOON, task.target_id)
+                        return NodeStates.SUCCESS
                     end
+
+                    return NodeStates.FAILURE
+                end)),
+                ---@param task KillTask
+                ActionNode:new(Task.withTask(function(task)
+                    return NormalAttack(task.target_id)
                 end))
             })
         ),
