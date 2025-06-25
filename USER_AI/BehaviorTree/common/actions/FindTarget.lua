@@ -1,7 +1,7 @@
 --- @param id number
 local function checkBlackList(id)
     local val = Blackboard.black_list_cache:get(id)
-    TraceAI('DINF LOG'..json.encode(val))
+    TraceAI('DINF LOG' .. json.encode(val))
     return val ~= nil
 end
 
@@ -50,13 +50,16 @@ end
 local function findBestTargetInMonsters()
     local target = nil
     for id, monster in pairs(Blackboard.objects.monsters) do
-        -- 忽略黑名单里的怪
-        if checkBlackList(monster) == false then
-            if target == nil then
-                target = monster
-            else
-                if monster.distance < target.distance then
+        -- 先要考虑，是否是屏幕内的 即与主人相距<=15
+        if monster.distance_owner <= 15 then
+            -- 忽略黑名单里的怪
+            if checkBlackList(monster) == false then
+                if target == nil then
                     target = monster
+                else
+                    if monster.distance < target.distance then
+                        target = monster
+                    end
                 end
             end
         end
@@ -94,9 +97,9 @@ end
 ]]
 local function madDogFindTarget()
     -- 1. 第一目标是主人打的
-    -- if Blackboard.objects.owner.target ~= nil then
-    --     return Blackboard.objects.owner.target
-    -- end
+    if Blackboard.objects.owner.target ~= nil then
+        return Blackboard.objects.owner.target
+    end
 
     -- 2. monster 里找
     return findBestTargetInMonsters()
