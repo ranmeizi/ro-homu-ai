@@ -119,6 +119,11 @@ HFLI_MOON = 8009
 ---res code
 --------------------------
 
+---[
+---  SUCCESS = 1, -- 节点 成功. 
+---  RUNNING = 0, -- 节点 运行中. 
+---  FAILURE = -1 -- 节点 运行中. 
+--]
 NodeStates = {
     SUCCESS = 1, -- 节点 成功
     RUNNING = 0, -- 节点 运行中
@@ -138,5 +143,3 @@ SCREEN_MAX_DISTANCE = 14 -- 超过多少给生命体拉回来
 IDLE_FOLLOW_DISTANCE = 3 -- 空闲跟随距离
 
 --------------------------
-
-

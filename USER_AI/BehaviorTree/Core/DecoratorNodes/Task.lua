@@ -31,7 +31,6 @@ function TaskNode:execute()
             return NodeStates.FAILURE
         end
     end
-
     return status
 end
 

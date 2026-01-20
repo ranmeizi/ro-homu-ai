@@ -23,6 +23,8 @@ local RecoveryRecorder = HpSpRecorder.new(120, 200)
 Blackboard = {
     id = nil, -- 生命体id
 
+    is_init = true,
+
     owner_id = nil,
 
     type = nil,
@@ -141,6 +143,15 @@ end
 
 local function loop(id)
     TraceAI('AI loop start')
+
+    
+    if Blackboard.is_init then
+        TraceAI('INIT')
+
+        Blackboard.is_init = true
+    end
+
+
     -- 记录id
     Blackboard.id = id
     Blackboard.owner_id = GetV(V_OWNER, id)
@@ -176,8 +187,10 @@ function AI(id)
                 noprotect = false -- 不保护循环引用
             }
 
-            TraceAI(json.encode(Blackboard.black_list_cache, options))
-            TraceAI(json.encode(Blackboard.cooldown, options))
+            -- TraceAI(json.encode(Blackboard.black_list_cache, options))
+            -- TraceAI(json.encode(Blackboard.cooldown, options))
+            -- 看一下 Blackboard 能格式化成啥样
+            TraceAI(json.encode(Blackboard, options))
         end
 
         if PerXSecond(60) then
