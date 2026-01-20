@@ -19,6 +19,9 @@
 ---@class FarmTask 练级
 ---@field name 'Farm'
 
+---@class Solve2048Task 玩2048
+---@field name 'Solve2048'
+
 ---@class UseSkillTask 放技能
 ---@field name 'UseSkill'
 ---@field level number 技能等级

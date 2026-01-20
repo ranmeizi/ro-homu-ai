@@ -44,7 +44,7 @@ end
 
 -- 插队
 ---comment
----@param task MoveToTask | KillTask | StopTask | FarmTask | UseSkillTask
+---@param task MoveToTask | KillTask | StopTask | FarmTask | UseSkillTask | Solve2048Task
 ---@param options TryJumpTaskOptions | nil
 function TryJumpTask(task, options)
 	-- 保存当前任务

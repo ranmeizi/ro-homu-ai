@@ -105,6 +105,7 @@ local OptionHandlers = {
     end,
     -- option2 开关 保持buff environment module 去控制技能释放
     function()
+        TraceAI('OPTION 2')
         local conf = Blackboard.buff_conf
         local type = Blackboard.type
 
@@ -126,8 +127,16 @@ local OptionHandlers = {
     Todo,
     -- option7
     Todo,
-    -- option8
-    Todo
+    -- option8 2048
+    function()
+        TraceAI('OPTION 8')
+        ---@type Solve2048Task
+        local task = {
+            name = 'Solve2048'
+        }
+
+        TryJumpTask(task, { removeUniqueTask = true })
+    end
 }
 
 -- 好像有些太啰嗦，就当是测试节点，以后用一个function搞定
