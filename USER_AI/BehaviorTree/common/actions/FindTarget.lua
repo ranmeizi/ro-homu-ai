@@ -97,7 +97,8 @@ end
 ]]
 local function madDogFindTarget()
     -- 1. 第一目标是主人打的
-    if Blackboard.objects.owner.target ~= nil then
+    if Blackboard.objects.owner.target ~= nil and Blackboard.objects.owner.target ~= 0 and GetV(V_MOTION, Blackboard.objects.owner.target) ~= -1 then
+        -- 判断怪还或者
         return Blackboard.objects.owner.target
     end
 
@@ -113,9 +114,10 @@ end
 ]]
 local function loyalDogFindTarget()
     -- 1. 第一目标是主人打的
-    -- if Blackboard.objects.owner.target ~= nil then
-    --     return Blackboard.objects.owner.target
-    -- end
+    if Blackboard.objects.owner.target ~= nil and Blackboard.objects.owner.target ~= 0 and GetV(V_MOTION, Blackboard.objects.owner.target) ~= -1 then
+        -- 判断怪还或者
+        return Blackboard.objects.owner.target
+    end
 
     -- 2. 攻击自己的怪
     local res = findNearestInAggroList(Blackboard.objects.aggroListHomu)

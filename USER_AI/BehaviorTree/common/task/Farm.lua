@@ -24,11 +24,13 @@ local Farm = Sequence:new({
         -- 重置
         Blackboard.objects.bestTarget = nil
 
-        local res = FindTarget.madDogFindTarget()
+        -- local res = FindTarget.madDogFindTarget()
+        local res = FindTarget.loyalDogFindTarget()
 
         Blackboard.objects.bestTarget = res
 
         if res == nil then
+            TraceAI('TARGET NIL')
             MoveToOwner(Blackboard.id)
 
             -- TODO 没有目标 这里往点击队列里 push 一个坐标

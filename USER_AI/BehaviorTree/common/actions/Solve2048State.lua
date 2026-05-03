@@ -89,6 +89,7 @@ local function identify(myid)
 end
 
 function Solve2048()
+    TraceAI('2048 in')
     if PerXSecond(1) then
         local grid = identify(MyID)
 
@@ -110,3 +111,5 @@ function Solve2048()
     -- 作为一个状态永远执行中,你需要手动终止
     return NodeStates.RUNNING
 end
+
+return Solve2048

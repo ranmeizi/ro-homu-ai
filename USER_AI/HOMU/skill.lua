@@ -25,10 +25,12 @@ local skillbook = {
     }
 }
 
-local filir_buff = { { 1, HFLI_FLEET }, { 1, HFLI_SPEED } }
+-- local filir_buff = { { 1, HFLI_FLEET }, { 1, HFLI_SPEED } }
+local filir_buff = { { 1, HFLI_FLEET } }
 
 local buff_conf = {
-    [FILIR] = filir_buff
+    [FILIR] = filir_buff,
+    [FILIR_H] = filir_buff,
 }
 
 return {

@@ -51,11 +51,11 @@ local EnvironmentSubTree = Sequence:new({
             --     Blackboard.task_queue:unshift(currTask)
             -- end
 
-            local task = {
-                name = 'Stop'
-            }
+            -- local task = {
+            --     name = 'Stop'
+            -- }
 
-            TryJumpTask(task, { removeUniqueTask = true })
+            -- TryJumpTask(task, { removeUniqueTask = true })
         end
 
         return NodeStates.SUCCESS

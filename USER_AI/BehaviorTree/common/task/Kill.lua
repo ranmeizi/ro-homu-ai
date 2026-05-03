@@ -121,7 +121,7 @@ local filir_kill_skill_on_way_branch = Inverter:new(
             end),
             ---@param task KillTask
             ActionNode:new(Task.withTask(function(task)
-                UseSkill(5, HFLI_MOON, task.target_id)
+                UseSkill(1, HFLI_MOON, task.target_id)
                 return NodeStates.SUCCESS
             end))
         }),
@@ -130,7 +130,7 @@ local filir_kill_skill_on_way_branch = Inverter:new(
             -- 如果sp充足(10次5级月光sp + buff最低消费)且目标距离>9
             ConditionNode:new(function()
                 -- 看看能否连续使用10次5级月光
-                local moon_10_cost = SkillInfo.skillbook[HFLI_MOON]['5'].sp_cost * 10
+                local moon_10_cost = SkillInfo.skillbook[HFLI_MOON]['1'].sp_cost * 10
                 -- 最低保留sp 保证能用1次 加速+闪避
                 local min_sp = SkillInfo.skillbook[HFLI_FLEET]['1'].sp_cost +
                     SkillInfo.skillbook[HFLI_SPEED]['1'].sp_cost
@@ -189,6 +189,8 @@ local filir_kill_subtree = Succeeder:new(
                     end)),
                     ActionNode:new(Task.withTask(function(task)
                         local res = NormalAttack(task.target_id)
+
+                        TraceAI('KILL TASK FIRST ATK')
 
                         -- 攻击失败
                         if (res == NodeStates.FAILURE) then
@@ -250,7 +252,8 @@ local Kill = Task:new(
                 -- 判断是飞里乐
                 Sequence:new({
                     ConditionNode:new(function()
-                        if Blackboard.type == FILIR then
+                        TraceAI('feilile? Blackboard.type' .. Blackboard.type)
+                        if Blackboard.type == FILIR or Blackboard.type == FILIR_H then
                             return NodeStates.SUCCESS
                         else
                             return NodeStates.FAILURE

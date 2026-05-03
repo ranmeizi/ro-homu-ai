@@ -138,7 +138,7 @@ NodeStates = {
 --- runtime
 --------------------------
 
-SCREEN_MAX_DISTANCE = 14 -- 超过多少给生命体拉回来
+SCREEN_MAX_DISTANCE = 3 -- 超过多少给生命体拉回来
 
 IDLE_FOLLOW_DISTANCE = 3 -- 空闲跟随距离
 

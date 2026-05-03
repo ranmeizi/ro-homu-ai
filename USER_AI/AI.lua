@@ -144,7 +144,7 @@ end
 local function loop(id)
     TraceAI('AI loop start')
 
-    
+
     if Blackboard.is_init then
         TraceAI('INIT')
 
@@ -190,7 +190,8 @@ function AI(id)
             -- TraceAI(json.encode(Blackboard.black_list_cache, options))
             -- TraceAI(json.encode(Blackboard.cooldown, options))
             -- 看一下 Blackboard 能格式化成啥样
-            TraceAI(json.encode(Blackboard, options))
+            -- TraceAI(_G.json.encode(Blackboard, options))
+            TraceAI("kan : " .. Blackboard.objects.homu.type)
         end
 
         if PerXSecond(60) then
