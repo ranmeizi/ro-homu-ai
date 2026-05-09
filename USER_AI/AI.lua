@@ -101,6 +101,9 @@ Blackboard = {
         -- 怪物列表
         monsters = {},
 
+        -- 别人生命体打的怪，我去蹭应该是安全的
+        homu_safe_target = Array:new({}),
+
         -- 生命体 仇恨列表
         aggroListHomu = Array:new({}),
 

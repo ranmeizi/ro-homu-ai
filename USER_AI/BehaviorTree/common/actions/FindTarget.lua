@@ -11,6 +11,11 @@ local function clearBlackListInterval()
     end
 end
 
+local function getHomuFriendSafeTarget()
+    return Blackboard.objects.homu_safe_target:pop()
+end
+
+
 --[[
     应该是探测不到客户端的 hp sp
     选最近的把
@@ -119,6 +124,12 @@ local function loyalDogFindTarget()
         return Blackboard.objects.owner.target
     end
 
+    -- 1.5 别人生命体
+    local safe_homu_target = getHomuFriendSafeTarget()
+    if safe_homu_target then
+        return safe_homu_target
+    end
+
     -- 2. 攻击自己的怪
     local res = findNearestInAggroList(Blackboard.objects.aggroListHomu)
 
@@ -141,6 +152,7 @@ end
 local function deadDogFindTarget()
 
 end
+
 
 return {
     madDogFindTarget = madDogFindTarget,

@@ -33,6 +33,9 @@ function Environment()
 
     Blackboard.objects.monsters = {} -- 刷新
 
+    Blackboard.objects.homu_safe_target = Array:new() -- 刷新
+
+
     for index, value in ipairs(actors) do
         if IsMonster(value) == 1 then
             Blackboard.objects.monsters[value] = {}
@@ -40,6 +43,17 @@ function Environment()
             -- 是敌人的话多检测一下 target 计算一下 distance
             Blackboard.objects.monsters[value].distance = GetDistance2(Blackboard.id, value)
             Blackboard.objects.monsters[value].distance_owner = GetDistance2(Blackboard.owner_id, value)
+        end
+
+        local homu_type = GetV(V_HOMUNTYPE, value)
+        -- 属于生命体但不是自己
+        if homu_type > 0 and homu_type < 9 and value ~= Blackboard.id then
+            -- 找他们有没有目标
+            local target = GetV(V_TARGET, value)
+
+            if target ~= nil and target > 0 then
+                Blackboard.objects.homu_safe_target:push(target)
+            end
         end
     end
 
