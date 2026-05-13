@@ -1,5 +1,7 @@
 TraceAI('Farm')
 local Farm = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Farm'
+local Drain = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Drain'
+local Touch = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Touch'
 
 local MoveTo = require 'AI_sakray.USER_AI.BehaviorTree.common.task.MoveTo'
 local Kill = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Kill'
@@ -11,6 +13,8 @@ local handlers = {
     Kill = Kill,
     Stop = Stop,
     Farm = Farm,
+    Drain = Drain,
+    Touch = Touch,
     UseSkill = UseSkill
 }
 

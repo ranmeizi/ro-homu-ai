@@ -6,28 +6,30 @@ local Skill = require("AI_sakray/USER_AI/HOMU/skill")
 --- 创建 MoveTo Task
 --- [MoveTo.lua](${workspaceFolder}/USER_AI/BehaviorTree/common/task/MoveTo.lua)
 local function createMoveToTask()
-    -- 消费 cmds
     local cmd = Blackboard.cmds:shift()
 
-    -- 创建一个 MoveTo Task
-    Blackboard.task = {
+    ---@type MoveToTask
+    local task = {
         name = 'MoveTo',
         pos_x = cmd[2],
         pos_y = cmd[3]
     }
+
+    return TryJumpTask(task, { removeUniqueTask = true })
 end
 
 --- 创建 Kill Task
 --- [Kill.lua](${workspaceFolder}/USER_AI/BehaviorTree/common/task/Kill.lua)
 local function createKillTask()
-    -- 消费 cmds
     local cmd = Blackboard.cmds:shift()
 
-    -- 创建一个 MoveTo Task
-    Blackboard.task = {
+    ---@type KillTask
+    local task = {
         name = 'Kill',
         target_id = cmd[2]
     }
+
+    return TryJumpTask(task, { removeUniqueTask = true })
 end
 
 ---@params index number
@@ -117,8 +119,18 @@ local OptionHandlers = {
             Blackboard.buff_conf = nil
         end
     end,
-    -- option3
-    Todo,
+    -- option3 大队模式：插队 Drain（与 Option1 Farm 相同，结束用 Alt+T 连击）
+    function()
+        TraceAI('OPTION 3')
+        ---@type DrainTask
+        local task = {
+            name = 'Drain'
+        }
+
+        TryJumpTask(task, { removeUniqueTask = true })
+
+        clear()
+    end,
     -- option4
     Todo,
     -- option5
@@ -222,7 +234,7 @@ local CommandModule = Sequence:new({
                 ActionNode:new(createKillTask)
             }),
             Sequence:new({
-                -- 判断第一位是不是 MOVE_CMD
+                -- 判断第一位是不是 SKILL_OBJECT_CMD
                 ConditionNode:new(createCmdCondition(1, SKILL_OBJECT_CMD)),
                 -- 放技能
                 ActionNode:new(function()

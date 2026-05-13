@@ -111,7 +111,10 @@ Blackboard = {
         aggroListOwner = Array:new({}),
 
         -- 记录 find taeget 的结果
-        bestTarget = nil
+        bestTarget = nil,
+
+        -- Drain 当前选中的特殊目标（对标 bestTarget）
+        drainTouchTarget = nil
     },
 
     -- 记录日志

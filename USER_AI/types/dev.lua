@@ -19,6 +19,13 @@
 ---@class FarmTask 练级
 ---@field name 'Farm'
 
+---@class DrainTask 月光点名循环（寻特殊怪 → Touch）
+---@field name 'Drain'
+
+---@class TouchTask 对单怪一次月光并登记 id
+---@field name 'Touch'
+---@field target_id number
+
 ---@class Solve2048Task 玩2048
 ---@field name 'Solve2048'
 
@@ -29,7 +36,7 @@
 ---@field target_id number 目标ID
 
 ---@class TryJumpTaskOptions
----@field removeUniqueTask boolean 默认nil 开启删除队列里这个name的task
+---@field removeUniqueTask? boolean 开启则删除队列里同名 task
 
 ---@class AbstractTimer 计时器
 ---@field startTime number 开始时间

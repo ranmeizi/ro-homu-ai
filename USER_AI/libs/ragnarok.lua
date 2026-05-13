@@ -21,6 +21,7 @@ function Attack(myid, enemy_id)
   print(myid, enemy_id)
 end
 
+-- 获取地图信息
 ---@param value any
 ---@param id number
 ---@return any,any
