@@ -10,9 +10,9 @@ local options = {
 Memory.load()
 
 function AI()
-    print("memory:", Memory.tick,Memory.memory.state)
+    print("memory:", Memory.persist.tick, Memory.persist.memory and Memory.persist.memory.state)
 
-    Memory.tick = Memory.tick + 1
+    Memory.persist.tick = (Memory.persist.tick or 0) + 1
 
     Memory.store()
 end

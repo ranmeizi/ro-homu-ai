@@ -5,9 +5,9 @@ require 'AI_sakray.USER_AI.Memory'
 Memory.load()
 
 local function loop(id)
-    print("memory:", Memory.tick,Memory.memory.state)
-    
-    Memory.tick = Memory.tick + 1
+    print("memory:", Memory.persist.tick, Memory.persist.memory and Memory.persist.memory.state)
+
+    Memory.persist.tick = (Memory.persist.tick or 0) + 1
 
     if math.random() > 0.5 then
         error('给我死')

@@ -173,6 +173,9 @@ local CommandModule = Sequence:new({
                             Blackboard.task = nil
                             Blackboard.task_queue:clear()
 
+                            -- 自动续buff也关闭
+                            Blackboard.buff_conf = nil
+
                             return NodeStates.SUCCESS
                         end)
                     }),

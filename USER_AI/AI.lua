@@ -126,6 +126,12 @@ Blackboard = {
     }
 }
 
+require('AI_sakray/USER_AI/Memory')
+Memory.load()
+
+-- 每次脚本重载只水合一次（需先有 GetV 的 id/type）
+local memoryHydrated = false
+
 -- 初始化行为树
 local tree = BehaviorTree:new(TestingBT.root)
 local filir_tree = BehaviorTree:new(FilirBT.root)
@@ -163,6 +169,11 @@ local function loop(id)
     Blackboard.owner_id = GetV(V_OWNER, id)
     Blackboard.type = GetV(V_HOMUNTYPE, id)
 
+    if not memoryHydrated then
+        Memory.hydrateToBlackboard()
+        memoryHydrated = true
+    end
+
     showTasks()
 
     -- 运行行为树
@@ -187,6 +198,9 @@ function AI(id)
         end
 
         if PerXSecond(10) then
+
+            Memory.store()
+
             local options = {
                 indent = true,    -- 美化输出，带缩进和换行
                 level = 0,        -- 初始缩进级别
@@ -203,9 +217,10 @@ function AI(id)
         if PerXSecond(60) then
             RecoveryRecorder:analyze()
         end
+        
     end, function(err)
         TraceAI('出错天了噜' .. tostring(err))
-        -- 保存 memory
+        Memory.store()
 
         -- 打印堆栈信息
         TraceAI(debug.traceback(err))

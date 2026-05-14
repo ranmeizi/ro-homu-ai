@@ -1,65 +1,179 @@
-local json = require('AI_sakray.USER_AI.libs.dkjson')
+local json = require('AI_sakray/USER_AI.libs/dkjson')
+
+--[[
+  持久化载荷在 Memory.persist。磁盘文件与 persist 同构，可附加 tick 等测试字段。
+
+  典型流程（Blackboard 已创建、且已写入 id/type 后再水合 buff）：
+    require('AI_sakray/USER_AI/Memory')
+    Memory.load()
+    Memory.hydrateToBlackboard()  -- 内部用 _G.Blackboard
+
+  存盘（会先 dehydrateFromBlackboard）：
+    Memory.store()
+
+  仅更新快照不写盘：
+    Memory.dehydrateFromBlackboard()
+]]
 
 local filePath = 'AI_sakray/memory.json'
 
-Memory = {}
+---@class MemoryPersist
+---@field version number
+---@field buff_conf_enabled boolean
+---@field task table|nil
+---@field task_queue table[]
 
--- 合并函数：将新表的键值对复制到原表，但不覆盖已存在的键
-local function mergePreserveOriginal(dest, src)
-    for k, v in pairs(src) do
-        if dest[k] == nil then -- 仅当原表没有该键时才添加
-            dest[k] = v
+Memory = Memory or {}
+
+Memory.PERSIST_VERSION = 1
+
+--- 写入磁盘的纯数据（可含 tick 等测试用任意键）
+Memory.persist = Memory.persist or {
+    version = Memory.PERSIST_VERSION,
+    buff_conf_enabled = false,
+    task = nil,
+    task_queue = {},
+}
+
+--- 任务里以下划线开头的键视为运行时临时状态，不参与脱水
+---@param task table|nil
+---@return table|nil
+local function copyTaskForPersist(task)
+    if task == nil then
+        return nil
+    end
+    local out = {}
+    for k, v in pairs(task) do
+        if type(k) == 'string' and k:sub(1, 1) == '_' then
+            -- skip
+        elseif type(v) ~= 'function' and type(v) ~= 'userdata' and type(v) ~= 'thread' then
+            out[k] = v
         end
     end
-    return dest -- 仍然返回原表的引用
+    return out
 end
 
+---@param task table|nil
+---@return table|nil
+local function shallowCloneTask(task)
+    if task == nil then
+        return nil
+    end
+    local out = {}
+    for k, v in pairs(task) do
+        out[k] = v
+    end
+    return out
+end
 
-
---- 脚本执行一开始 读取 memory
-function Memory.load()
-    local file, err = io.open(filePath, "r")
-    if not file then
-        print("文件打开失败:", err)
+--- 从 Blackboard 抽取可序列化快照写入 Memory.persist（不立刻写盘）
+---@param bb table|nil 默认 _G.Blackboard
+function Memory.dehydrateFromBlackboard(bb)
+    bb = bb or rawget(_G, 'Blackboard')
+    if bb == nil then
         return
     end
 
-    -- 读取全部内容到字符串
-    local content = file:read("*a") -- "*a" 表示读取所有内容
-    file:close()                    -- 关闭文件
+    local p = Memory.persist
+    p.version = Memory.PERSIST_VERSION
+    p.buff_conf_enabled = bb.buff_conf ~= nil
+    p.task = copyTaskForPersist(bb.task)
 
-    local data, pos, err = json.decode(content, 1, nil)
+    local queue = {}
+    if bb.task_queue ~= nil then
+        for _, t in bb.task_queue:ipairs() do
+            queue[#queue + 1] = copyTaskForPersist(t)
+        end
+    end
+    p.task_queue = queue
 
-    -- 使用合并函数
-    mergePreserveOriginal(Memory, data)
+    -- 旧版 JSON 可能含这两项，脱水后清掉以免下次 store 再写进去
+    p.black_list_cache = nil
+    p.cooldown = nil
 end
 
---- 脚本结束 存储 memory
-function Memory.store()
-    local options = {
-        indent = true,    -- 美化输出，带缩进和换行
-        level = 0,        -- 初始缩进级别
-        noprotect = false -- 不保护循环引用
-    }
-
-    Memory.load = nil
-    Memory.store = nil
-
-    TraceAI('Store memory:'..Memory.tick)
-
-    local jsonString = json.encode(Memory, options)
-
-    local file, err = io.open(filePath, "w") -- "w" 模式表示写入，会覆盖文件内容
-
-    if not file then
-        TraceAI('无法打开文件')
-        error("无法打开文件: " .. err)
+--- 将 Memory.persist 中内容灌回 Blackboard（需已由 AI 初始化 task_queue 等）
+---@param bb table|nil 默认 _G.Blackboard
+function Memory.hydrateToBlackboard(bb)
+    bb = bb or rawget(_G, 'Blackboard')
+    if bb == nil then
+        return
     end
 
-    -- 将内容写入文件
-    ---@diagnostic disable-next-line: param-type-mismatch
-    file:write(jsonString)
+    local p = Memory.persist
+    if p.buff_conf_enabled and bb.type ~= nil then
+        local Skill = require('AI_sakray/USER_AI/HOMU/skill')
+        local conf = Skill.buff_conf[bb.type]
+        bb.buff_conf = conf
+    else
+        bb.buff_conf = nil
+    end
 
-    -- 关闭文件
+    if bb.task_queue ~= nil then
+        while bb.task_queue:len() > 0 do
+            bb.task_queue:shift()
+        end
+        for _, t in ipairs(p.task_queue or {}) do
+            bb.task_queue:push(shallowCloneTask(t))
+        end
+    end
+
+    bb.task = shallowCloneTask(p.task)
+end
+
+--- 读盘：JSON 合并进 Memory.persist（整文件即 persist 载荷，便于扩展测试字段）
+function Memory.load()
+    local file, err = io.open(filePath, 'r')
+    if not file then
+        return
+    end
+
+    local content = file:read('*a')
+    file:close()
+
+    local data, pos, decErr = json.decode(content, 1, nil)
+    if data == nil then
+        TraceAI('Memory.load decode 失败: ' .. tostring(decErr))
+        return
+    end
+
+    if type(data) ~= 'table' then
+        return
+    end
+
+    for k, v in pairs(data) do
+        Memory.persist[k] = v
+    end
+    if Memory.persist.version == nil then
+        Memory.persist.version = Memory.PERSIST_VERSION
+    end
+end
+
+--- 脱水当前 Blackboard 并写入 memory.json
+function Memory.store()
+    Memory.dehydrateFromBlackboard()
+
+    local options = {
+        indent = true,
+        level = 0,
+        noprotect = false,
+    }
+
+    local jsonString = json.encode(Memory.persist, options) --[[@as string|nil]]
+    if type(jsonString) ~= 'string' then
+        TraceAI('Memory.store encode 失败')
+        return
+    end
+
+    local file, err = io.open(filePath, 'w')
+    if not file then
+        TraceAI('Memory.store 无法打开文件: ' .. tostring(err))
+        return
+    end
+
+    ---@cast jsonString string
+    file:write(jsonString)
     file:close()
 end
+
+return Memory
