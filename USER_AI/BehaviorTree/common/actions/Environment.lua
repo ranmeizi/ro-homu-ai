@@ -31,7 +31,7 @@ function Environment()
     -- 获取所有敌人
     local actors = GetActors()
 
-    Blackboard.objects.monsters = {} -- 刷新
+    Blackboard.objects.monsters = {}                  -- 刷新
 
     Blackboard.objects.homu_safe_target = Array:new() -- 刷新
 
@@ -47,7 +47,11 @@ function Environment()
 
         local homu_type = GetV(V_HOMUNTYPE, value)
         -- 属于生命体但不是自己
-        if homu_type > 0 and homu_type < 9 and value ~= Blackboard.id then
+        if
+            (homu_type > 0 and homu_type < 9 and value ~= Blackboard.id)
+            or homu_type == 1579 -- 种的海葵
+            or homu_type == 1555 -- 种的苗娃
+        then
             -- 找他们有没有目标
             local target = GetV(V_TARGET, value)
 

@@ -14,6 +14,17 @@ local poring_map                  = {
     [1096] = { name = '天使波利', value = 2048 }
 }
 
+function IsKeyInTable(table, key)
+    for k, v in pairs(table) do
+        if k == key then
+            return true
+        end
+    end
+
+    return false
+end
+
+
 local function saveGridToCsv(grid)
     local csv = ""
     TraceAI('start create csv')
@@ -88,7 +99,7 @@ local function identify(myid)
     return grid
 end
 
-function Solve2048()
+function Solve2048State()
     TraceAI('2048 in')
     if PerXSecond(1) then
         local grid = identify(Blackboard.id)
@@ -112,4 +123,4 @@ function Solve2048()
     return NodeStates.RUNNING
 end
 
-return Solve2048
+return Solve2048State

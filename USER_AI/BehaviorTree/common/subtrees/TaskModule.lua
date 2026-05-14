@@ -7,6 +7,7 @@ local MoveTo = require 'AI_sakray.USER_AI.BehaviorTree.common.task.MoveTo'
 local Kill = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Kill'
 local Stop = require('AI_sakray/USER_AI/BehaviorTree/common/task/Stop')
 local UseSkill = require('AI_sakray/USER_AI/BehaviorTree/common/task/UseSkill')
+local Solve2048 = require("AI_sakray/USER_AI/BehaviorTree/common/task/Solve2048")
 
 local handlers = {
     MoveTo = MoveTo,
@@ -15,7 +16,8 @@ local handlers = {
     Farm = Farm,
     Drain = Drain,
     Touch = Touch,
-    UseSkill = UseSkill
+    UseSkill = UseSkill,
+    Solve2048 = Solve2048
 }
 
 local TaskModule = {}

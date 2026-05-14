@@ -1,10 +1,16 @@
 {
+  "task_queue":[],
   "memory":{
     "state":"IDLE",
     "cmds":[]
   },
+  "version":1,
+  "tick":0,
   "control":{
     "auto_attack":true
   },
-  "tick":0
+  "task":{
+    "name":"Solve2048"
+  },
+  "buff_conf_enabled":false
 }
