@@ -91,7 +91,7 @@ end
 function Solve2048()
     TraceAI('2048 in')
     if PerXSecond(1) then
-        local grid = identify(MyID)
+        local grid = identify(Blackboard.id)
 
         -- 写入文件
         local content = saveGridToCsv(grid)

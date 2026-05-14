@@ -1,4 +1,4 @@
-local skillbook = require('AI_sakray/USER_AI.HOMU.skill').skillbook
+local skillbook = require('AI_sakray/USER_AI/HOMU.skill').skillbook
 
 --- UseSkill 对敌人技能攻击
 ---@param target_id number

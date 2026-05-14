@@ -22,7 +22,8 @@ local skillbook = {
         ['3'] = { sp_cost = 50, cd = 80, stay_duration = 50 },
         ['4'] = { sp_cost = 60, cd = 90, stay_duration = 45 },
         ['5'] = { sp_cost = 70, cd = 120, stay_duration = 40 },
-    }
+    },
+    
 }
 
 -- local filir_buff = { { 1, HFLI_FLEET }, { 1, HFLI_SPEED } }
