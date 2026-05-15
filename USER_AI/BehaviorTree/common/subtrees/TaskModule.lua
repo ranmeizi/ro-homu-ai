@@ -8,6 +8,9 @@ local Kill = require 'AI_sakray.USER_AI.BehaviorTree.common.task.Kill'
 local Stop = require('AI_sakray/USER_AI/BehaviorTree/common/task/Stop')
 local UseSkill = require('AI_sakray/USER_AI/BehaviorTree/common/task/UseSkill')
 local Solve2048 = require("AI_sakray/USER_AI/BehaviorTree/common/task/Solve2048")
+local RoundHeart = require('AI_sakray/USER_AI/BehaviorTree/common/task/Funny/RoundHeart')
+local RoundRect = require('AI_sakray/USER_AI/BehaviorTree/common/task/Funny/RoundRect')
+local RoundRandom = require('AI_sakray/USER_AI/BehaviorTree/common/task/Funny/RoundRandom')
 
 local handlers = {
     MoveTo = MoveTo,
@@ -17,7 +20,10 @@ local handlers = {
     Drain = Drain,
     Touch = Touch,
     UseSkill = UseSkill,
-    Solve2048 = Solve2048
+    Solve2048 = Solve2048,
+    RoundHeart = RoundHeart,
+    RoundRect = RoundRect,
+    RoundRandom = RoundRandom
 }
 
 local TaskModule = {}

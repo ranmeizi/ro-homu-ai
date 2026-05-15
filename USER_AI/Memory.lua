@@ -13,6 +13,8 @@ local json = require('AI_sakray/USER_AI.libs/dkjson')
 
   仅更新快照不写盘：
     Memory.dehydrateFromBlackboard()
+
+  任务是否参与持久化：task.persistent == true（例如 Farm）。未标记或 false 的当前任务与队列项均不写入 / 读盘时忽略。
 ]]
 
 local filePath = 'AI_sakray/memory.json'
@@ -34,6 +36,12 @@ Memory.persist = Memory.persist or {
     task = nil,
     task_queue = {},
 }
+
+---@param task table|nil
+---@return boolean
+local function shouldPersistTask(task)
+    return task ~= nil and task.persistent == true
+end
 
 --- 任务里以下划线开头的键视为运行时临时状态，不参与脱水
 ---@param task table|nil
@@ -77,12 +85,14 @@ function Memory.dehydrateFromBlackboard(bb)
     local p = Memory.persist
     p.version = Memory.PERSIST_VERSION
     p.buff_conf_enabled = bb.buff_conf ~= nil
-    p.task = copyTaskForPersist(bb.task)
+    p.task = shouldPersistTask(bb.task) and copyTaskForPersist(bb.task) or nil
 
     local queue = {}
     if bb.task_queue ~= nil then
         for _, t in bb.task_queue:ipairs() do
-            queue[#queue + 1] = copyTaskForPersist(t)
+            if shouldPersistTask(t) then
+                queue[#queue + 1] = copyTaskForPersist(t)
+            end
         end
     end
     p.task_queue = queue
@@ -114,11 +124,13 @@ function Memory.hydrateToBlackboard(bb)
             bb.task_queue:shift()
         end
         for _, t in ipairs(p.task_queue or {}) do
-            bb.task_queue:push(shallowCloneTask(t))
+            if shouldPersistTask(t) then
+                bb.task_queue:push(shallowCloneTask(t))
+            end
         end
     end
 
-    bb.task = shallowCloneTask(p.task)
+    bb.task = shouldPersistTask(p.task) and shallowCloneTask(p.task) or nil
 end
 
 --- 读盘：JSON 合并进 Memory.persist（整文件即 persist 载荷，便于扩展测试字段）

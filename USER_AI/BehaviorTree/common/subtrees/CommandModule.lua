@@ -62,7 +62,8 @@ end
     这里规定，下命令，在主人周围 8 格 代表 8个 options
     1️⃣2️⃣3️⃣       -1,1 | 0,1 | 1,1
     4️⃣👨🏻‍🦳5️⃣       -1,0  |      | 1,0
-    6️⃣7️⃣8️⃣       -1,-1  | 0,1  | 1,-1
+    6️⃣7️⃣8️⃣       -1,-1 | 0,-1 | 1,-1
+    4 RoundHeart  5 RoundRect  6 RoundRandom（均绕主人）
 ]]
 local function getValidOptions(x, y)
     local ox = Blackboard.objects.owner.pos.x
@@ -98,7 +99,8 @@ local OptionHandlers = {
         TraceAI('OPTION 1')
         ---@type FarmTask
         local task = {
-            name = 'Farm'
+            name = 'Farm',
+            persistent = true,
         }
 
         TryJumpTask(task, { removeUniqueTask = true })
@@ -131,12 +133,36 @@ local OptionHandlers = {
 
         clear()
     end,
-    -- option4
-    Todo,
-    -- option5
-    Todo,
-    -- option6
-    Todo,
+    -- option4 绕主人走心形（Funny）
+    function()
+        TraceAI('OPTION 4 RoundHeart')
+        TryJumpTask({
+            name = 'RoundHeart',
+            target_id = Blackboard.owner_id,
+        }, { removeUniqueTask = true })
+
+        clear()
+    end,
+    -- option5 绕主人 8 格环来回（Funny）
+    function()
+        TraceAI('OPTION 5 RoundRect')
+        TryJumpTask({
+            name = 'RoundRect',
+            target_id = Blackboard.owner_id,
+        }, { removeUniqueTask = true })
+
+        clear()
+    end,
+    -- option6 绕主人 8 格环随机跳（Funny）
+    function()
+        TraceAI('OPTION 6 RoundRandom')
+        TryJumpTask({
+            name = 'RoundRandom',
+            target_id = Blackboard.owner_id,
+        }, { removeUniqueTask = true })
+
+        clear()
+    end,
     -- option7
     Todo,
     -- option8 2048

@@ -29,6 +29,25 @@
 ---@class Solve2048Task 玩2048
 ---@field name 'Solve2048'
 
+---@class RoundHeartTask 绕目标走心形
+---@field name 'RoundHeart'
+---@field target_id number
+---@field _wp? { number, number }[]
+---@field _idx? number
+
+---@class RoundRectTask 绕目标周围 8 格矩形环来回走（直到取消任务）
+---@field name 'RoundRect'
+---@field target_id number
+---@field _wp? { number, number }[]
+---@field _idx? number
+
+---@class RoundRandomTask 绕目标 8 格环随机乱跳（直到取消任务）
+---@field name 'RoundRandom'
+---@field target_id number
+---@field _gx? number
+---@field _gy? number
+---@field _rng_seeded? boolean
+
 ---@class UseSkillTask 放技能
 ---@field name 'UseSkill'
 ---@field level number 技能等级
