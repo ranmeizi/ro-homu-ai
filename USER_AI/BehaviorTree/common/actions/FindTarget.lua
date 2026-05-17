@@ -138,7 +138,7 @@ local function loyalDogFindTarget()
     end
 
     -- 3. 攻击主人的目标
-    res = findNearestInAggroList(Blackboard.objects.hateListOwner)
+    res = findNearestInAggroList(Blackboard.objects.aggroListOwner)
 
     if res ~= nil then
         return res

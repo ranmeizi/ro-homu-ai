@@ -10,7 +10,8 @@
     "auto_attack":true
   },
   "task":{
-    "name":"Solve2048"
+    "name":"Farm",
+    "persistent":true
   },
   "buff_conf_enabled":false
 }

@@ -1,6 +1,9 @@
 --[[
     除了主人 和 生命体 其他的hpsp 看起来是获取不到
 ]]
+local detection = require("AI_sakray/USER_AI/ahk_util/detection")
+TraceAI("[Environment] 模块已加载")
+
 local function updateTargetInfoOnTable(table, id)
     table.id = id
     table.hp = GetV(V_HP, id)
@@ -78,6 +81,11 @@ function Environment()
         end
     end
 
+    -- 种海葵：主人 13 格内有敌人 且 周围海葵 < 1
+    local ok, err = pcall(detection.check_and_plant)
+    if not ok then
+        TraceAI("[Environment] detection 异常: " .. tostring(err))
+    end
 
     return NodeStates.SUCCESS
 end
