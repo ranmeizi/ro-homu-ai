@@ -1,17 +1,16 @@
 {
-  "task_queue":[],
+  "task_queue":[{
+      "name":"Farm",
+      "persistent":true
+    }],
   "memory":{
     "state":"IDLE",
     "cmds":[]
   },
   "version":1,
-  "tick":0,
   "control":{
     "auto_attack":true
   },
-  "task":{
-    "name":"Farm",
-    "persistent":true
-  },
+  "tick":0,
   "buff_conf_enabled":false
 }

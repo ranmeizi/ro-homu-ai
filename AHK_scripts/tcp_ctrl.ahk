@@ -51,7 +51,6 @@ global CMD_FILE := A_ScriptDir "\tcp_cmd.txt"
 
 ; ── 底层控制函数（不暴露 TCP，handler 里组合调用）──
 
-global _BuiltinClick := Click
 global _BuiltinSend := Send
 
 GetScreenCenter() {
@@ -62,10 +61,19 @@ MoveTo(x, y) {
     MouseMove(x, y, 0)
 }
 
-Click(btn := "L", count := 1) {
+MouseClick(btn := "L", count := 1) {
+    static downUp := Map(
+        "Left",   [0x0002, 0x0004],
+        "Right",  [0x0008, 0x0010],
+        "Middle", [0x0020, 0x0040],
+    )
     which := BtnToWhich(btn)
-    loop Max(1, count)
-        _BuiltinClick(which)
+    pair := downUp.Has(which) ? downUp[which] : downUp["Left"]
+    loop Max(1, count) {
+        DllCall("mouse_event", "UInt", pair[1], "Int", 0, "Int", 0, "UInt", 0, "UPtr", 0)
+        Sleep(40)
+        DllCall("mouse_event", "UInt", pair[2], "Int", 0, "Int", 0, "UInt", 0, "UPtr", 0)
+    }
 }
 
 KeyPress(keys, count := 1) {
@@ -104,6 +112,7 @@ InitTcpHandlers() {
  * @returns {String} 
  */
 TCP_Cmd01(parts) {
+    Log("炼金种海葵")
     ; 移动到屏幕中央
     center := GetScreenCenter()
     MoveTo(center.x, center.y)
@@ -112,8 +121,9 @@ TCP_Cmd01(parts) {
     Sleep(1000)
     ; 随机移动
     MoveTo(Random(center.x - 60, center.x + 60), Random(center.y - 60, center.y + 60))
-    ; 点击左键
-    Click("L")
+    Sleep(50)
+    ; 点击左键（MoveTo 已定位，mouse_event 比 Click() 更易被游戏识别）
+    MouseClick("L")
     return "OK"
 }
 
